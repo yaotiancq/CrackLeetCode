@@ -19,6 +19,8 @@ count will also be equal to 0. If there are elements in the interval that do not
 when the interval reaches len(p), count cannot be reduced to 0. As the interval moves to the right, 
 the left boundary will start to increment count. Only when the left boundary moves out of these invalid elements, 
 can count reach 0, indicating that an anagram has been found.
+d[ord(s[j])]+=1 need to out of if d[ord(s[j])]>=0: because target character might become negative, for example, continuous two same target character.
+So, It must substract when right point access it and addition when left point access for every character.
 """
 def findAnagrams(self, s: str, p: str) -> List[int]:
     count=len(p)
@@ -41,4 +43,28 @@ def findAnagrams(self, s: str, p: str) -> List[int]:
                 count+=1
             d[ord(s[j])]+=1
             j+=1
+    return ans
+
+"""
+Hash is a good way to ignore the order of sequence. The chance of same summary of different group of character is low though it is 
+not a strict way. I think.
+"""
+
+def findAnagrams(self, s: str, p: str) -> List[int]:
+    ls,lp,hs,hp,ans=len(s),len(p),0,0,[]
+
+    if ls<lp:
+        return []
+
+    for i in range(lp):
+        hs+=hash(s[i])
+        hp+=hash(p[i])
+    
+    if hs==hp:
+        ans.append(0)
+
+    for i in range(lp,ls):
+        hs+=(hash(s[i])-hash(s[i-lp]))
+        if hs==hp:
+            ans.append(i-lp+1)
     return ans
