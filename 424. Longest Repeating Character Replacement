@@ -1,0 +1,56 @@
+# You are given a string s and an integer k. You can choose any character of the string and change it to any other uppercase English character. 
+# You can perform this operation at most k times.
+# Return the length of the longest substring containing the same letter you can get after performing the above operations.
+
+# Example 1:
+# Input: s = "ABAB", k = 2
+# Output: 4
+# Explanation: Replace the two 'A's with two 'B's or vice versa.
+
+"""
+Use right pointer to loop over the entire s, and keep record of the frequency of each characher.
+Update the max length when the available number of slots is less or equal than k. We can not use equal to k here.
+Because we might not use up all the slots. So we need to update the max length even the slots are not used up.
+The left pointer's update is the key performance determinated strategy. Because we need to find the longest substring,
+so we do not need to consider the one smaller than the previous. So in the updating of left, we do not need to use loop 
+to keep the substring legit. Only need to keep the substring from getting larger when is already illegal.
+
+"""
+def characterReplacement(self, s: str, k: int) -> int:
+    j=0
+    d={}
+    cnt=0
+    for i in range(len(s)):
+        if s[i] not in d:
+            d[s[i]]=1
+        else:
+            d[s[i]]+=1
+
+        if i-j+1-max(d.values())<=k:
+            cnt=max(cnt,i-j+1)
+        else:
+            d[s[j]]-=1
+            j+=1
+    return cnt
+
+
+"""
+This one is not the best, but the use of long list which use ord(c) value as its index, and it is a good method to 
+track the frequency of c. It do not need membership test which dictionary need. And it is easier to calculate some
+statistic value, such as max, sum. If using dict, the code will be more complicated. Also, the update of left pointer is 
+no necessary legit. This is hard to recognize.
+"""
+def characterReplacement(self, s: str, k: int) -> int:
+	j=0
+	d=[0]*91
+	cnt=0
+	for i in range(len(s)):
+		d[ord(s[i])]+=1
+		if sum(d)-max(d)<=k:
+			cnt=max(cnt,i-j+1)
+		else:
+			while j<i and sum(d)-max(d)>k:
+				d[ord(s[j])]-=1
+				j+=1
+	return cnt
+        
