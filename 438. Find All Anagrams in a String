@@ -21,6 +21,7 @@ the left boundary will start to increment count. Only when the left boundary mov
 can count reach 0, indicating that an anagram has been found.
 d[ord(s[j])]+=1 need to out of if d[ord(s[j])]>=0: because target character might become negative, for example, continuous two same target character.
 So, It must substract when right point access it and addition when left point access for every character.
+Should remenber that first update i then update j
 """
 def findAnagrams(self, s: str, p: str) -> List[int]:
     count=len(p)
