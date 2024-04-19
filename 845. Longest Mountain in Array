@@ -29,3 +29,21 @@ def longestMountain(self, arr: List[int]) -> int:
             ans = max(ans, r-l+1)
 
     return ans
+
+"""
+Loop over the arr, and set a flag to True and set j=i when there is a mountain top, then detect the right edge of the mountain.
+when reach the right edge of the mountain, use j to loop back to find the left edge of the mountain
+"""
+def longestMountain(self, arr: List[int]) -> int:      
+    ans=0
+    mountainTop=False
+    for i in range(len(arr)):
+        if i>0 and i<len(arr)-1 and arr[i]-arr[i+1]>0 and arr[i-1]-arr[i]<0:
+            mountainTop=True
+            j=i
+        if mountainTop and (i==len(arr)-1 and arr[i-1]>arr[i] or i<len(arr)-1 and arr[i-1]>arr[i] and arr[i]<=arr[i+1]):
+            while j>0 and arr[j]>arr[j-1]:
+                j-=1
+            ans=max(ans, i-j+1)
+            mountainTop=False
+    return ans
