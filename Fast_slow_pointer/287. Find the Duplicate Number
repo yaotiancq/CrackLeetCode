@@ -1,0 +1,58 @@
+# Given an array of integers nums containing n + 1 integers where each integer is in the range [1, n] inclusive.
+# There is only one repeated number in nums, return this repeated number.
+# You must solve the problem without modifying the array nums and uses only constant extra space.
+
+# Example 1:
+# Input: nums = [1,3,4,2,2]
+# Output: 2
+
+# 1 <= n <= 105
+# nums.length == n + 1
+# 1 <= nums[i] <= n
+# All the integers in nums appear only once except for precisely one integer which appears two or more times.
+
+"""
+With the constrain, this problem can be considered as fast slow pointer problem. Every element can be saw as the index of next element.
+And it make sure that there is a cicle.
+Fast-slow-pointer:
+  two pointer, one with two step every time , another with one step every time. They are sure to meet at some node. When they meet, 
+  reboot the fast and change its speed to one step every time. When fast and slow pointer meet again, the node they point is the start of 
+  the circle.
+"""
+def findDuplicate(self, nums: List[int]) -> int:
+
+    slow=0
+    fast=0
+    while True:
+        slow=nums[slow]
+        fast=nums[nums[fast]]
+        if slow==fast:
+            break
+    
+    fast=0
+    while fast!=slow:
+        slow=nums[slow]
+        fast=nums[fast]
+    
+    return slow
+
+
+"""
+Another method is BS. The duplication of element will make the mid element different from the one with no duplication.
+If the mid element is smaller than the no duplication one. the duplication must happend in the left half. Other situation is similar.
+"""
+def findDuplicate(self, nums: List[int]) -> int:
+
+    nums.sort()
+    
+    left=0
+    right=len(nums)-1
+    
+    while left<=right:
+        mid=left+(right-left)//2
+        if nums[mid]<=mid:
+            right=mid-1
+        else:
+            left=mid+1
+    
+    return left
