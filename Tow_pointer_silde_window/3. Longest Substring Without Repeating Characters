@@ -1,0 +1,27 @@
+# 3. Longest Substring Without Repeating Characters
+#   Given a string s, find the length of the longest substring without repeating characters. A substring is a contiguous non-empty sequence of characters within a string.
+# Input: s = "abcabcbb"
+# Output: 3
+# Explanation: The answer is "abc", with the length of 3.
+"""
+ Two pointer or slide window, miantain the set with every extinct character existing only one time.
+Moving forward the right pointer, if meet character which is not in set , add it in the set, else if the character 
+is already in the set, moving the left pointer and delete the corresponding character in the set. Repeate this process 
+until right pointer character not in the set, and add it in the set and moving forward. Every repeatition will maintain
+extinct character show up only once in the window. So in every loop, it should count the length of the set and update 
+the max length of substring
+"""
+def lengthOfLongestSubstring(self, s: str) -> int:
+    d={}
+    i=0
+    j=0
+    ans=0
+    while i<len(s) and j<len(s):
+        if s[j] not in d:
+            d[s[j]]=1
+            j+=1
+        else:
+            del d[s[i]]
+            i+=1
+        ans=max(ans,len(d))
+    return ans

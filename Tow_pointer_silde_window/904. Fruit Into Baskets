@@ -1,0 +1,59 @@
+# You are visiting a farm that has a single row of fruit trees arranged from left to right. 
+# The trees are represented by an integer array fruits where fruits[i] is the type of fruit the ith tree produces.
+
+# You want to collect as much fruit as possible. However, the owner has some strict rules that you must follow:
+
+# You only have two baskets, and each basket can only hold a single type of fruit. 
+# There is no limit on the amount of fruit each basket can hold.
+# Starting from any tree of your choice, you must pick exactly one fruit from every tree 
+# (including the start tree) while moving to the right. The picked fruits must fit in one of your baskets.
+# Once you reach a tree with fruit that cannot fit in your baskets, you must stop.
+# Given the integer array fruits, return the maximum number of fruits you can pick.
+
+# Example 1:
+# Input: fruits = [1,2,1]
+# Output: 3
+# Explanation: We can pick from all 3 trees.
+
+# Example 2:
+# Input: fruits = [0,1,2,2]
+# Output: 3
+# Explanation: We can pick from trees [1,2,2].
+# If we had started at the first tree, we would only pick from trees [0,1].
+
+
+"""
+Use a list to record the element frequency in the windows. Because there might be only one tree in the garden,
+the update process can not happen only at the condition of count==0.
+Count=2 means the remain disctinct element in window. when moving the right edge of window, if the right pointer element
+is not in the window, then count-=1, means consume one disctinct element remains in window. If the count<0, it means that
+the distinct element in window is more than 2, that is not acceptable. So we need to adust the left edge of the window.
+if the left pointer element' frequency is 1 in window, then it means that removing this element will release the remain slot in 
+window. 
+The update of j happen only in the condition of i-j+1>=2. We don't need update j every i's update.
+"""
+def totalFruit(self, fruits: List[int]) -> int:
+    d=[0]*len(fruits)
+    count=2
+    ans=0
+    j=0
+    i=0
+    
+    if len(fruits)<2:
+        return len(fruits)
+
+    while i<len(fruits):
+        if d[fruits[i]]==0:
+            count-=1
+        d[fruits[i]]+=1
+            
+        if i-j+1>=2:
+            if count>=0:
+                ans=max(ans,i-j+1)
+            else:
+                if d[fruits[j]]==1:
+                    count+=1
+                d[fruits[j]]-=1
+                j+=1
+        i+=1
+    return ans

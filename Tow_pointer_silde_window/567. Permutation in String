@@ -1,0 +1,46 @@
+# Given two strings s1 and s2, return true if s2 contains a permutation of s1, or false otherwise.
+# In other words, return true if one of s1's permutations is the substring of s2.
+
+# Example 1:
+# Input: s1 = "ab", s2 = "eidbaooo"
+# Output: true
+# Explanation: s2 contains one permutation of s1 ("ba").
+
+
+"""
+Use ASCII value as index store frequency.
+Count is the legit number, used to traced the remain legit data need to put in window.
+Slid the window over the series. When meet with right pointer, then count subtract by 1 when the character is legit. When the window lenght reach the lenght needed,
+update the left pointer and add 1 to count when is s[j] is legit.
+The frequency will update every move of right pointer and left pointer without any consideration of whether the character is legit or not, to make sure that the needed character is 
+correctly tracked
+右指针和左指针的处理需要保持一致性
+
+1          --- ---                                                                                     --- ---
+0  --- ---         --- ---         ->                  --- ---                  ->             --- ---         --- ---             
+-1                                             --- ---         --- ---
+
+
+"""
+def checkInclusion(self, s1: str, s2: str) -> bool:
+    d=[0]*128
+    j=0
+    count=len(s1)
+
+    for c in s1:
+        d[ord(c)]+=1
+
+    for i in range(len(s2)):
+        if d[ord(s2[i])]>0:
+            count-=1
+        d[ord(s2[i])]-=1
+        
+        if i-j+1==len(s1):
+            if count==0:
+                return True
+            if d[ord(s2[j])]>=0:
+                count+=1
+            d[ord(s2[j])]+=1
+            j+=1
+
+    return False

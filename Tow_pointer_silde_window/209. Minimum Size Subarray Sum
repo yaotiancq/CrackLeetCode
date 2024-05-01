@@ -1,0 +1,35 @@
+# Given an array of positive integers nums and a positive integer target, return the minimal length of a 
+# subarray whose sum is greater than or equal to target. If there is no such subarray, return 0 instead.
+
+# Example 1:
+# Input: target = 7, nums = [2,3,1,2,4,3]
+# Output: 2
+# Explanation: The subarray [4,3] has the minimal length under the problem constraint.
+
+
+"""
+The basic idea of this kind of problem is to define the updating strategy of of the two pointers.
+In this problem, the right pointer loop over the nums, and add every element right pointer meet to the sum.
+The left pointer will stay where it is until the sum is surpass the target. When the sum is larger or equal than the target,
+We need to substract the element pointed by left pointer from the sum until the sum is less than tha target again.
+The outer loop is about he right pointer looping over the entire nums, to make sure it won't miss any of the substring.
+The left pointer inner loop only appear when we need to maintain the left boarder to make sum smaller than target.
+"""
+def minSubArrayLen(self, target: int, nums: List[int]) -> int:
+    i=0
+    j=0
+    cnt=len(nums)
+    s=0
+    while j<len(nums):
+        s+=nums[j]
+        if s>=target:
+            while i<=j:
+                if s-nums[i]>=target:
+                    s-=nums[i]
+                    i+=1
+                else:
+                    break
+            if cnt>j-i+1:
+                cnt=j-i+1
+        j+=1
+    return 0 if s<target else cnt

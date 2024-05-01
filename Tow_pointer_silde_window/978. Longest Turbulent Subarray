@@ -1,0 +1,42 @@
+# Given an integer array arr, return the length of a maximum size turbulent subarray of arr.
+# A subarray is turbulent if the comparison sign flips between each adjacent pair of elements in the subarray.
+# More formally, a subarray [arr[i], arr[i + 1], ..., arr[j]] of arr is said to be turbulent if and only if:
+
+# For i <= k < j:
+# arr[k] > arr[k + 1] when k is odd, and
+# arr[k] < arr[k + 1] when k is even.
+# Or, for i <= k < j:
+# arr[k] > arr[k + 1] when k is even, and
+# arr[k] < arr[k + 1] when k is odd.
+ 
+# Example 1:
+# Input: arr = [9,4,2,10,7,8,8,1,9]
+# Output: 5
+# Explanation: arr[1] > arr[2] < arr[3] > arr[4] < arr[5]
+
+
+"""
+Two pointers, the right pointer will go with the loop, nothing will change its increament.
+The left pointer will change along with the right pointer. 
+There are two situation needed to handle to update the j.
+One is the arr[i-1]==arr[i], if this happen, means that the left pointer will immediately follow i, 
+because the arr[i-1] will be drop from the window.
+Another is the (arr[i-2]-arr[i-1])^(arr[i-1]-arr[i])>=0, when this happen, the j=i-1, because when arr[i-1]!=arr[i] and 
+do not satisfied the wavy situation, the j should started from i-1. i-1 might be the start and might be not, if not , it will
+be updated by the next one.
+"""
+def maxTurbulenceSize(self, arr: List[int]) -> int:
+    ans=0     
+    j=0
+
+    if len(arr)==1:
+        ans=1
+
+    for i in range(1,len(arr)):
+        if arr[i-1]==arr[i]:
+            j=i
+        elif i>1 and (arr[i-2]-arr[i-1])^(arr[i-1]-arr[i])>=0:
+            j=i-1
+        ans=max(ans,i-j+1)
+    
+    return ans
