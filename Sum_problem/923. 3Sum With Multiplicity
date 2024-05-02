@@ -46,3 +46,29 @@ def threeSumMulti(self, arr: List[int], target: int) -> int:
             else:
                 start+=1
     return ans%(10**9+7)
+
+
+"""
+Use Counter to record the freqency.Simulate every possible combination of results. Calculate the combination numbers
+"""
+from collections import Counter
+def threeSumMulti(self, arr: List[int], target: int) -> int:
+    couter=Counter(arr)
+    unique_arr=list(couter.keys())
+    unique_arr.sort()
+    n=len(unique_arr)
+    ans=0
+
+    for i in range(n):
+        if unique_arr[i]*3==target and couter[unique_arr[i]]>=3:
+            ans+=couter[unique_arr[i]]*(couter[unique_arr[i]]-1)*(couter[unique_arr[i]]-2)//6
+        else:
+            for j in range(i+1,n):
+                if unique_arr[i]*2+unique_arr[j]==target and couter[unique_arr[i]]>=2:
+                    ans+=(couter[unique_arr[i]]*(couter[unique_arr[i]]-1)//2)*(couter[unique_arr[j]])
+                if unique_arr[j]*2+unique_arr[i]==target and couter[unique_arr[j]]>=2:
+                    ans+=(couter[unique_arr[j]]*(couter[unique_arr[j]]-1)//2)*(couter[unique_arr[i]])
+                c=target-unique_arr[i]-unique_arr[j]
+                if c>unique_arr[j] and couter[c]>0:
+                    ans+=couter[unique_arr[i]]*couter[unique_arr[j]]*couter[c]
+    return ans%(10**9+7)
