@@ -1,0 +1,95 @@
+# Given an integer array nums, return all the triplets [nums[i], nums[j], 
+# nums[k]] such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0.
+# Notice that the solution set must not contain duplicate triplets.
+
+# Example 1:
+# Input: nums = [-1,0,1,2,-1,-4]
+# Output: [[-1,-1,2],[-1,0,1]]
+# Explanation: 
+# nums[0] + nums[1] + nums[2] = (-1) + 0 + 1 = 0.
+# nums[1] + nums[2] + nums[4] = 0 + 1 + (-1) = 0.
+# nums[0] + nums[3] + nums[4] = (-1) + 2 + (-1) = 0.
+# The distinct triplets are [-1,0,1] and [-1,-1,2].
+# Notice that the order of the output and the order of the triplets does not matter.
+
+
+
+"""
+Use two pointer, condiser start, index, end pointer. Fisrt sort the array. It doesn't matter to sort it, because it is already O(n^2) time complexity.
+Sorted array will make the duplication element easy to deal with. We can treat the answer to be the combination of three different element which in loccation
+of index, index, end. start<index<end. 
+  For index: If nums[index]==nums[index-1], means that nums[start],nums[index-1],nums[end] has been check before, there is no need to 
+check nums[start],nums[index],nums[end] again. Also, the one before index-1 as start had already been considered when checked nums[start],nums[index-1],nums[end].
+So, the start can start from index-1. 
+  For start: In the inner loop, we use start-end-pointer to solve sorted array addion problem. Again, When nums[start]==nums[start-1], start should be passed, 
+because nums[start-1] has been evaluated. 
+  For end: The same with start. 
+
+Then, we can use start-end-pointer to figure out what combination of start, index, end is equal to 0.
+
+The hardest part of this algorithm is how to deal with index's duplication. 
+The same index means the duplicate consideration of combination. This duplication should be dropped, which led to dropping of part of the array.
+So, the start star from index-1. 
+
+"""
+def threeSum(self, nums: List[int]) -> List[List[int]]:
+
+    ans=[]
+    nums.sort()
+    n=len(nums)
+
+    for index in range(1,n-1):
+        start=0
+        end=n-1
+        if index>1 and nums[index]==nums[index-1]:
+            start=index-1
+        
+        while start<index and end>index:
+            if start>0 and nums[start]==nums[start-1]:
+                start+=1
+                continue
+
+            if end<n-1 and nums[end]==nums[end+1]:
+                end-=1
+                continue
+
+            if nums[start]+nums[index]+nums[end]==0:
+                ans.append([nums[start],nums[index],nums[end]])
+                start+=1
+                end-=1
+            elif nums[start]+nums[index]+nums[end]<0:
+                start+=1
+            else:
+                end-=1
+    return ans
+
+
+
+"""
+Use collections.Counter to get the frequency of each unique element. For each element in unique element, if unique_nums[i]==0 and counter[unique_nums[i]]>=3,
+this should be one answer. With the inner loop of j, if unique_nums[i]*2+unique_nums[j]==0 and counter[unique_nums[i]]>=2, or unique_nums[j]*2+unique_nums[i]==0 and counter[unique_nums[j]]>=2
+happens, this should be one answer too. Otherwise, we should check whether 0-unique_nums[i]-unique_nums[j] exist in counter. If there is, there is a answer.
+
+Counter is a function used to do statistic job in iterator, and return a dictionary whoes key is the unique element in that container.
+"""
+from collections import Counter
+
+def threeSum(self, nums: List[int]) -> List[List[int]]:
+    ans=[]
+    # Counter return a dictionary
+    counter=Counter(nums)
+    unique_nums=list(counter.keys())
+    # exclude some duplicate answer
+    unique_nums.sort()
+    for i in range(len(unique_nums)):
+        if unique_nums[i]==0 and counter[unique_nums[i]]>=3:
+            ans.append([unique_nums[i],unique_nums[i],unique_nums[i]])
+        for j in range(i+1,len(unique_nums)):
+            if unique_nums[i]*2+unique_nums[j]==0 and counter[unique_nums[i]]>=2:
+                ans.append([unique_nums[i],unique_nums[i],unique_nums[j]])
+            if unique_nums[j]*2+unique_nums[i]==0 and counter[unique_nums[j]]>=2:
+                ans.append([unique_nums[i],unique_nums[j],unique_nums[j]])
+            c=0-unique_nums[i]-unique_nums[j]
+            if c>unique_nums[j] and counter[c]>0:
+                ans.append([unique_nums[i],unique_nums[j],c])
+    return ans
