@@ -1,0 +1,55 @@
+# Given the head of a singly linked list and two integers left and right where left <= right, 
+# reverse the nodes of the list from position left to position right, and return the reversed list.
+
+# Input: head = [1,2,3,4,5], left = 2, right = 4
+# Output: [1,4,3,2,5]
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+
+
+"""
+Use head-insertion method, from the beginning of the sub list, get the next node of it and put it after the prev node.
+Every time, prev node point at the curr node's next node: prev.next=curr.next. Because this will erase the curr node, we need to 
+reserve curr node before we point prev node to curr node's next node. After we point prev node to curr node's next node, we need
+to add the curr node back after the curr node's next node. We update the curr's next node: curr.next=curr.next.next. Then , we add it after 
+prev.next.next: prev.next.next=temp.
+
+for example:
+prev.val=1
+curr=prev.next
+1 -> 2 -> 3 -> 4 -> 5
+
+Loop:
+temp=prev.next
+prev.next=curr.next
+1 -> 3 -> 4 -> 5
+
+curr.next=curr.next.next
+pre.next.next=temp
+1 -> 3 -> 2 -> 4 -> 5
+end
+"""
+def reverseBetween(self, head: Optional[ListNode], left: int, right: int) -> Optional[ListNode]:
+    if not head or left>right:
+        return head
+    
+    new_head=ListNode()
+    new_head.next=head
+    prev=new_head
+
+    for _ in range(left-1):
+        prev=prev.next
+    
+    curr=prev.next
+
+    for _ in range(right-left):
+        temp=prev.next
+        prev.next=curr.next
+        curr.next=curr.next.next
+        prev.next.next=temp
+
+    return new_head.next
