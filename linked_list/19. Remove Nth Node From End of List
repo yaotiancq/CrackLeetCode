@@ -30,6 +30,9 @@ The new linked list is : 0-1-2-3-4-5
 Another benifit of it is that we move k step from the new head, it will stop at the k-st node. This will facilitate our moving on linked list.
 When we move n steps with the first pointer named fast. It will stop at the n-st node from the head. Then, we start another pointer slow from the 
 new_head. When the fast end ant the last node, the slow will stop at the previous node of the n-st node from the end.
+
+while fast.next: mean it will stop at the last valid node, so that we can avoid the none problem. When fast stop at the last node, the fast move len(linked_list)-n
+steps, and the slow also move len(linked_list)-n steps, which will stop at the previous node of required n-st node from the end.
 """
     def removeNthFromEnd(self, head: Optional[ListNode], n: int) -> Optional[ListNode]:
         new_head=ListNode()
