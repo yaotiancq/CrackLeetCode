@@ -1,0 +1,49 @@
+# Given the head of a linked list, remove the nth node from the end of the list and return its head.
+
+# Example 1:
+# Input: head = [1,2,3,4,5], n = 2
+# Output: [1,2,3,5]
+
+# Example 2:
+# Input: head = [1], n = 1
+# Output: []
+
+# Example 3:
+# Input: head = [1,2], n = 1
+# Output: [1]
+
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+"""
+For problem like this: 1->2->3->4->5
+the removal of node might happen at the head node. So, we need to add a new head node to the original linked list.
+That is:  
+new_head=ListNode()
+new_head.next=head
+The new linked list is : 0-1-2-3-4-5
+
+Another benifit of it is that we move k step from the new head, it will stop at the k-st node. This will facilitate our moving on linked list.
+When we move n steps with the first pointer named fast. It will stop at the n-st node from the head. Then, we start another pointer slow from the 
+new_head. When the fast end ant the last node, the slow will stop at the previous node of the n-st node from the end.
+"""
+    def removeNthFromEnd(self, head: Optional[ListNode], n: int) -> Optional[ListNode]:
+        new_head=ListNode()
+        new_head.next=head
+
+        fast=new_head
+        for _ in range(n):
+            fast=fast.next
+        
+        slow=new_head
+        while fast.next:
+            fast=fast.next
+            slow=slow.next
+
+        slow.next=slow.next.next
+
+        return new_head.next
