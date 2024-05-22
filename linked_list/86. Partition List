@@ -1,0 +1,52 @@
+# Given the head of a linked list and a value x, partition it such that all nodes less than x come 
+# before nodes greater than or equal to x.
+# You should preserve the original relative order of the nodes in each of the two partitions.
+
+# Example 1:
+# Input: head = [1,4,3,2,5,2], x = 3
+# Output: [1,2,2,4,3,5]
+
+# Example 2:
+# Input: head = [2,1], x = 2
+# Output: [1,2]
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+
+
+"""
+First, find the insertion place of the listed node. 
+That is, the node before the first node which is larger or equal to x.
+Second, start from the insertion place, we traverse the listed node, 
+if the current node is smaller than x, we insert it at the insertion place. If not, keep tranversing.
+"""
+    def partition(self, head: Optional[ListNode], x: int) -> Optional[ListNode]:
+        if not head:
+            return None
+
+        new_head=ListNode()
+        new_head.next=head
+        
+        less_than_x=new_head
+
+        while less_than_x.next and less_than_x.next.val<x:
+            less_than_x=less_than_x.next
+
+        prev=less_than_x
+        curr=less_than_x.next
+        while curr:
+            if curr.val<x:
+                temp=curr.next
+                curr.next=less_than_x.next
+                less_than_x.next=curr
+                prev.next=temp
+                less_than_x=less_than_x.next
+                curr=prev.next
+            else:
+                prev=prev.next
+                curr=curr.next
+        return new_head.next
