@@ -1,0 +1,88 @@
+# Given the head of a singly linked list, group all the nodes with odd indices together followed 
+# by the nodes with even indices, and return the reordered list.
+
+# The first node is considered odd, and the second node is even, and so on.
+# Note that the relative order inside both the even and odd groups should remain as it was in the input.
+# You must solve the problem in O(1) extra space complexity and O(n) time complexity.
+
+ 
+
+# Example 1:
+# Input: head = [1,2,3,4,5]
+# Output: [1,3,5,2,4]
+
+# Example 2:
+# Input: head = [2,1,3,5,6,4,7]
+# Output: [2,3,6,7,1,5,4]
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+"""
+There is an issue here needed to aware. The current node must be the node after the insertion node. Otherwise, it won't get 
+right answer. Because the might be problem when two pointer point to the same node when erasing and adding node.
+"""
+    def oddEvenList(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        if not head:
+            return None
+
+        new_head=ListNode()
+        new_head.next=head
+ 
+        last_odd=head
+        prev=last_odd
+        curr=prev.next
+        cnt=2
+
+        while curr:
+            if cnt%2==0:
+                curr=curr.next
+                prev=prev.next
+            else:
+                temp=curr.next
+                curr.next=last_odd.next
+                last_odd.next=curr
+                last_odd=last_odd.next
+                prev.next=temp
+                curr=prev.next
+            cnt+=1
+        
+        return new_head.next
+
+"""
+Variant problem: divide the listed node into odd value and even value:
+# Example 1:
+# Input: head = [1,2,3,4,5]
+# Output: [1,3,5,2,4]
+Odd value are in the front, even value are in the back of linked list
+"""
+    def oddEvenList(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        if not head:
+            return None
+
+        new_head=ListNode()
+        new_head.next=head
+ 
+        last_odd=new_head
+        while last_odd.next and last_odd.next.val%2!=0:
+            last_odd=last_odd.next
+        
+        prev=last_odd
+        curr=prev.next
+
+        while curr:
+            if curr.val%2==0:
+                curr=curr.next
+                prev=prev.next
+            else:
+                temp=curr.next
+                curr.next=last_odd.next
+                last_odd.next=curr
+                last_odd=last_odd.next
+                prev.next=temp
+                curr=prev.next
+        
+        return new_head.next
