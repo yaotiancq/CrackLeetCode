@@ -46,3 +46,9 @@ Define the merge function. the merge function is used to merge two sorted linked
 from new_head, or the result will be always the last node. This fault happen for a few times.
 """
         return self.mergeList(head)
+
+
+"""
+There is a faster method for this problem if we do not consider the O(1) space limit. That is: using list to store the val, and sort the list and construct a new
+linked list.
+"""
