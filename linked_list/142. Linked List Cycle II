@@ -1,0 +1,76 @@
+# Given the head of a linked list, return the node where the cycle begins. 
+# If there is no cycle, return null.
+
+# There is a cycle in a linked list if there is some node in the list that can be reached again
+# by continuously following the next pointer. Internally, pos is used to denote the index of 
+# the node that tail's next pointer is connected to (0-indexed). It is -1 if there is no cycle. Note that pos is not passed as a parameter.
+
+# Do not modify the linked list.
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution:
+
+"""
+         -<---x2--<
+         -        -
+->-->-x1-->-->-x---
+First meet:  
+    fast: x1+x2+x
+    slow: x1+x
+x1+x2+x=2*(x1+x)
+=> x2=x1+x
+Second meet:
+    slow: y
+    fast: y
+if y==x1=x2-x:
+  then, slow and fast will meet again at x1 
+"""
+    def detectCycle(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        fast=head
+        slow=head
+
+        while fast and fast.next:
+            fast=fast.next.next
+            slow=slow.next
+            if fast==slow:
+                fast=head
+                break
+        
+        if fast and fast.next:
+            while fast!=slow:
+                fast=fast.next
+                slow=slow.next
+            return slow
+   
+        return None
+
+"""
+Another implementation, more clear implementation.
+"""
+    def hasCycle(self, head):
+        fast=head
+        slow=head
+        while fast and fast.next:
+            fast=fast.next.next
+            slow=slow.next
+            if fast==slow:
+                return True, slow
+        return False, None
+
+    def detectCycle(self, head: Optional[ListNode]) -> Optional[ListNode]:
+
+        hasCycle, slow = self.hasCycle(head)
+        if not hasCycle:
+            return None
+
+        fast=head
+        if fast and fast.next:
+            while fast!=slow:
+                fast=fast.next
+                slow=slow.next
+            return slow
