@@ -1,0 +1,48 @@
+# Given the head of a linked list, return the list after sorting it in ascending order.
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def merge(self, head1, head2):
+        if head1==None:
+            return head2
+        if head2==None:
+            return head1
+
+        if head1.val<head2.val:
+            head1.next=self.merge(head1.next,head2)
+            return head1
+        else:
+            head2.next=self.merge(head1,head2.next)
+            return head2
+
+
+    def mergeList(self, head):
+        if not head or head.next==None:
+            return head
+        
+        slow=head
+        fast=head
+        while fast.next and fast.next.next:
+            fast=fast.next.next
+            slow=slow.next
+        head2=slow.next
+        slow.next=None
+
+        left=self.mergeList(head)
+        right=self.mergeList(head2)
+        
+        return self.merge(left,right)
+
+
+    def sortList(self, head: Optional[ListNode]) -> Optional[ListNode]:
+"""
+Divide and conque, divide the list into half. Find the mid point of the list(fast-slow-pointer), and cut the list into half(slow.next=None).
+Continuely cut the list into smaller ones, when the head==None or head.next==None, return head, this is the basic situation.
+Define the merge function. the merge function is used to merge two sorted linked lists. If using vitual head here, remenber to traverse the vitual list start
+from new_head, or the result will be always the last node. This fault happen for a few times.
+"""
+        return self.mergeList(head)
