@@ -1,0 +1,48 @@
+# Given a balanced parentheses string s, return the score of the string.
+
+# The score of a balanced parentheses string is based on the following rule:
+
+# "()" has score 1.
+# AB has score A + B, where A and B are balanced parentheses strings.
+# (A) has score 2 * A, where A is a balanced parentheses string.
+ 
+
+# Example 1:
+
+# Input: s = "()"
+# Output: 1
+# Example 2:
+
+# Input: s = "(())"
+# Output: 2
+# Example 3:
+
+# Input: s = "()()"
+# Output: 2
+
+class Solution:
+"""
+The basic idea is useing stack to record different layer values. The out most layer will push first into the stack, and then the second layer.
+The end of each layer means that the corresponding value in stack will pop out and get involved in some calculation.
+The same layer will maintain the same ans to record the current layer's value. 
+When meeting the start of next layer, the ans should be recorded in stack and initialized for the next layer's calculation. Remind that, there are
+parellel layer.
+When meeting the end of the current layer, the ans will combine with parellel layer value or upper layer pop from stack to uppdate a new ans.
+New layer means push in and initialization, end of current layer means pop out and update current ans.
+"""
+    def scoreOfParentheses(self, s: str) -> int:
+        ans=0
+        i=0
+        score=[]
+        while i<len(s):
+            if s[i]=='(':
+                score.append(ans)
+                ans=0
+                i+=1
+            elif s[i]==')':
+                if ans==0:
+                    ans=score.pop()+1
+                else:
+                    ans=score.pop()+2*ans
+                i+=1
+        return ans
