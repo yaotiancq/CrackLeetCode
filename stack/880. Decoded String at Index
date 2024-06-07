@@ -1,0 +1,54 @@
+# You are given an encoded string s. To decode the string to a tape, the encoded string is read one character 
+# at a time and the following steps are taken:
+# If the character read is a letter, that letter is written onto the tape.
+# If the character read is a digit d, the entire current tape is repeatedly written d - 1 more times in total.
+# Given an integer k, return the kth letter (1-indexed) in the decoded string.
+
+# Example 1:
+# Input: s = "leet2code3", k = 10
+# Output: "o"
+# Explanation: The decoded string is "leetleetcodeleetleetcodeleetleetcode".
+# The 10th letter in the string is "o".
+
+class Solution:
+
+"""
+Use stack to record the index of each char show in s:
+stack=[(l,1),(e,2),(e,3),(t,4),(2,8),(c,9),(o,10),(d,11),(e,12),(3,36)]
+If k=2, char should be e. If k=30, the char appear in the repeated string of the previews 12 character long string.
+So, the target char can be found in 12 character long string. Which char in the 12 character long string?
+The repeated string' length is 12=36//3, the target index of 12-string is 6=30%12. So , we need find the No.6 char in 12-string
+Be careful here, if we need to find the 24th char , then 24%12==0, but there is no 0th char. We need to adjust it to 12, because 24th
+means the last char in 12-string.
+Then, keep pop out stack, (c,9),(o,10),(d,11),(e,12) are not our target. We meet (2,8), which we need to decide the 6th. This is when we need
+to get in smaller string: current_length//=int(char). And update the kth; k%=current_length
+"""
+    def decodeAtIndex(self, s: str, k: int) -> str:
+        stack=[]
+        current_length=0
+        i=0
+
+        # s = "leet2code3", k = 30, output='o'
+        while i<len(s):
+            if s[i].isalpha():
+                current_length+=1
+            elif s[i].isdigit():
+                current_length*=int(s[i]) 
+            stack.append((s[i],current_length))      
+            if current_length>=k:
+                break
+            i+=1
+
+        while stack:
+            char, length = stack.pop()
+            if char.isdigit():
+                current_length//=int(char) #12,4
+                k%=current_length #6,2
+                # if k==24, k will be adjusted to 0, but it should not be 0 exist. It should be the last char of current string
+                # so the k will be adjusted to current_length
+                if k==0:
+                    k=current_length
+            else:
+                if length==k:
+                    return char
+                current_length-=1
