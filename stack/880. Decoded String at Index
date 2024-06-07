@@ -52,3 +52,23 @@ to get in smaller string: current_length//=int(char). And update the kth; k%=cur
                 if length==k:
                     return char
                 current_length-=1
+
+"""
+Recursive method
+"""
+    def decodeAtIndex(self, s: str, k: int) -> str:
+        cnt=0
+        i=0
+        while i<len(s):
+            if s[i].isalpha():
+                cnt+=1
+                if k==cnt:
+                    return s[i]
+            else:
+                cnt*=int(s[i]) 
+                if cnt>=k:
+                    cnt//=int(s[i])
+                    if k%cnt!=0:
+                        return self.decodeAtIndex(s[:i],k%cnt)
+                    return self.decodeAtIndex(s[:i],cnt)       
+            i+=1
