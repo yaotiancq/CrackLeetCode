@@ -1,0 +1,88 @@
+# Given an array of integers heights representing the histogram's bar height where the width of each bar is 1, 
+# return the area of the largest rectangle in the histogram.
+
+# Example 1:
+# Input: heights = [2,1,5,6,2,3]
+# Output: 10
+# Explanation: The above is a histogram where width of each bar is 1.
+# The largest rectangle is shown in the red area, which has an area = 10 units.
+
+
+"""
+Typical application of Monotonic Stack
+The method is to find the left and right boundary of each element in heights.
+The left boundary(r) happen at the first element who is smaller than current element(in loop) after current element.
+The right boundary(l) happen at the nearest element who is smaller than current element.
+Then the area should be: (r-l-1)*height[curr]
+This is where we apply Monotonic Stack.
+Monotonic Stack has ability to record the nearest boundary of current element satisfied certain rules efficently.
+We use stack to record the index of heights.
+In the maintainance process of Monotonic Stack, we push in stack when the current element(in loop) is larger or equal than the peak of the stack.
+We pop out the peak when the current element is smaller than the peak. This peak is the element we use to calculate the area. The nearest smaller element 
+on the right is the one break the Monotonic trend of stack. The nearest smaller element on the left is the new peak of current stack.
+
+But there are corner cases:
+If the current element is the first element in the heights, we don't need to find the left boundary. There should be r-l where l should be 0.
+If the current element is the last element in the hights, we don't need to find the right boundary. There should be r-l where r should be len(heights)-1.
+
+In order to keep the process logic same, we add Sentinel to the heights. Sentinel is the lowest height in heights. So, every real element is larger than
+Sentinel, every real element will have left and right boundary, no matter it is the first or last real element in original heights. And the Sentinel will never
+pop out of stack and participant in area calculations: the real first element will push in stack at the beginning of loop but pop out even it is the smallest element
+in original heights, because the second Sentinel added at the end of heights will make every left element in stack pop out of stack. So we do not need to clear the
+stack to make sure every element in heights participant in area calculations. Otherwise, the clearing of stack is needed.
+"""
+class Solution:
+    def largestRectangleArea(self, heights: List[int]) -> int:
+
+        def get_height(i):
+            if i==0 or i==len(heights)+1:
+                return 0
+            return heights[i-1]
+
+        stack = []
+        ans = 0
+        n = len(heights)+2
+
+        for i in range(n):
+            while stack and get_height(i) < get_height(stack[-1]):
+                idx = stack.pop()
+                ans = max(ans, get_height(idx)*(i-stack[-1]-1))
+            stack.append(i)
+            
+        return ans
+
+
+"""
+No Sentinel versiion of Monotonic Stack.
+Boundary is the element who is smaller than target.
+The first while loop will pop out all the element whose right boundary exist in the heights. Because the right boundary who is smaller than target element
+will pop out target element. So the remain element don't have right boudary. In the first while loop, we can only consider the element have right boundary.
+So, r=i is enough. But the left boundary need more consideration. If an element in stack has no left neighbor, then, this element has no left boundary(smaller element
+who is on the left). So, we can set l=-1 to make it smaller than index 0, to keep (r-l-1) still working.
+The second while loop will pop out all the remain element in stack. Those stack don't have right boundary. To keep (r-l-1) working, r is set to n which is larger than
+len(heights)-1. The left bounday is still needed to considered.
+"""
+    def largestRectangleArea(self, heights: List[int]) -> int:
+        stack = []
+        ans = 0
+        n = len(heights)
+
+        for i in range(n):
+            while stack and heights[i] < heights[stack[-1]]:
+                curr = stack.pop()
+                h = heights[curr]
+                l = stack[-1] if stack else -1
+                r = i
+                s = (r - l - 1) * h
+                ans = max(ans, s)
+            stack.append(i)
+
+        while stack:
+            curr = stack.pop()
+            h = heights[curr]
+            l = stack[-1] if stack else -1
+            r = n
+            s = (r - l - 1) * h
+            ans = max(ans, s)
+
+        return ans
