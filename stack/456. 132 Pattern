@@ -20,7 +20,7 @@
 class Solution:
 """
 132 pattern
-Build a descent Monotonic Stack from the end of nums to the beginning of nums.
+Build a descent Monotonic Stack from the end of nums to the beginning of nums. We need 2 to be as large as possible.
 Why this work?
 132 pattern will pop out 2 because 3 is larger than 2. We keep record of the last poped element. After while loop and stack append process, 2 was
 poped out of stack and 3 was pushed in stack, last_pop was set to 2. Next loop, nums[i] was compared to 2, if nums[i] is smaller, then, the 132 pattern
