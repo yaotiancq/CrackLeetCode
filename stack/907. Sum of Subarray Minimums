@@ -1,0 +1,42 @@
+# Given an array of integers arr, find the sum of min(b), where b ranges over every (contiguous) subarray of arr. 
+# Since the answer may be large, return the answer modulo 109 + 7.
+
+# Example 1:
+# Input: arr = [3,1,2,4]
+# Output: 17
+# Explanation: 
+# Subarrays are [3], [1], [2], [4], [3,1], [1,2], [2,4], [3,1,2], [1,2,4], [3,1,2,4]. 
+# Minimums are 3, 1, 2, 4, 1, 1, 2, 1, 1, 1.
+# Sum is 17.
+
+class Solution:
+"""
+The key idea is use ascending monotonic stack to find the left and right boundary of each element.
+In order to keep the process logic simple and consistent, we add sentinel to original arr, so that 
+even the 1 can have a clear boundary.
+Before meeting the second sentinel in arr, we will pop out element when the ascending trend of stack is breaking.
+In [0,3,1,2,4,0], we will pop out 3 when we try to push in 1. 1 is the right boundary of 3. After 3 was poped out, the peak
+of stack is the left boundary of 3, because it ascending monotonic stack, every element's left element is its nearest left
+boundary. For 3, we get [0,2] as its left and right boundary.
+We need to access all the element in arr, but before meeting the second sentinel in arr, we only find the poped out element's
+boundary. This is where the second sentinel working. When we neet the second sentinel, because it is sentinel and it is the 
+smallest element in [0,3,1,2,4,0], we pop out all remain element in stack when we try to push in this second sentinel 0.
+So we get every element's boundary, except the sentinel.
+The first sentinel make the l=stack[-1] no matter the element in original arr has a left boundary or not. The sencond sentinel
+make the r=i, because even the one has no right boundary in original arr will have boundary in sentinel-arr.
+"""
+    def sumSubarrayMins(self, arr: List[int]) -> int:
+        arr=[0]+arr+[0]
+        n=len(arr)
+        stack=[]
+        ans=0
+        
+        for i in range(n):
+            while len(stack)>1 and arr[stack[-1]]>arr[i]:
+                idx=stack.pop()
+                l=stack[-1]
+                r=i
+                ans+=(idx-l)*(r-idx)*arr[idx]
+            stack.append(i)
+
+        return ans%(10**9+7)
