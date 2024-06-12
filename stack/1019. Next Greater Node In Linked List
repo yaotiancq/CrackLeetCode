@@ -1,0 +1,40 @@
+# You are given the head of a linked list with n nodes.
+# For each node in the list, find the value of the next greater node. That is, for each node, 
+# find the value of the first node that is next to it and has a strictly larger value than it.
+# Return an integer array answer where answer[i] is the value of the next greater node of the ith node (1-indexed). 
+# If the ith node does not have a next greater node, set answer[i] = 0.
+
+Example 1:
+Input: head = [2,1,5]
+Output: [5,5,0]
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+
+"""
+Monotonic stack, the stack element is a tuple which to keep the record of both val and idx, without the need of 
+build a list to keep record of listed node.
+We don't know the length of listed node, but we can extend ans at the beginning of every loop step. So that we make sure
+that the poped out element's index is in the scope of ans.
+We need to keep record of index in stack, but we don't have arr and corresponding for loop to track the index. We can set a 
+idx, and plus 1 every traversal step of listed node. This idx can be used as current index of listed node element
+We also need to keep record of val in stack, so we use a tuple to record val and index.
+"""
+    def nextLargerNodes(self, head: Optional[ListNode]) -> List[int]:
+        ans=[]
+        stack=[]
+        idx=0
+        
+        while head:
+            ans+=[0]
+            while stack and stack[-1][0]<head.val:
+                _,index=stack.pop()
+                ans[index]=head.val
+            stack.append((head.val,idx))
+            head=head.next
+            idx+=1
+        return ans
