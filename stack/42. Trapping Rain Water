@@ -1,0 +1,45 @@
+# Given n non-negative integers representing an elevation map where the width of each bar is 1, 
+# compute how much water it can trap after raining.
+
+# Example 1:
+# Input: height = [0,1,0,2,1,0,1,3,2,1,2,1]
+# Output: 6
+# Explanation: The above elevation map (black section) is represented by array [0,1,0,2,1,0,1,3,2,1,2,1]. 
+# In this case, 6 units of rain water (blue section) are being trapped.
+
+# Example 2:
+# Input: height = [4,2,0,3,2,5]
+# Output: 9
+
+class Solution:
+"""
+Using descending monotonic stack to every poped out element's left and right boundary.
+The element will pop out when it meet larger elements. This larger element is ite right boundary. 
+And because it is descending monotonic stack, its left element in stack is its left boundary.
+Left boundary and right boundary are all larger than this poped out element. They can form a water
+trap.
+One special problem in this case is the pop out element might not have left or right boundary.
+If the stack is empty, the pop out element don't have left boundary.
+We don't need to care the right boundary, because the element without right boundary can't hold water, and
+the element will remain in stack without poping out calculations.
+Second special problem is that we need to fill the water trap after we finishing the calculation. Because
+[1,0,1]'s 0 will pop out for calculation, and [2,1,0,1,3] will pop out 1,0,1 for calculation. If we don't fill
+the water trap, we will repeate calcalte the 0 water trap.
+"""
+    def trap(self, height: List[int]) -> int:
+        stack=[]
+        ans=0
+        for i in range(len(height)):
+            while stack and height[stack[-1]]<height[i]:
+                stack.pop()
+                r=i
+                if stack:
+                    l=stack[-1]
+                    h=min(height[l],height[r])
+                    t=0
+                    for j in range(l+1,r):
+                        t+=h-height[j]
+                        height[j]=h
+                    ans+=t
+            stack.append(i)
+        return ans
