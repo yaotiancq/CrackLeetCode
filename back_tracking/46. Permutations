@@ -51,3 +51,27 @@ Fourth, the backtracking process is the key idea to understand the brute force s
         backtracking(nums,ans,[],0)
 
         return ans
+
+"""
+Using used to help to record the usage of each element, if not used, then we can use. Otherwise, it can not be used.
+This is better way to decide whether an element should be used in current layer.
+"""
+    def permute(self, nums: List[int]) -> List[List[int]]:
+        
+        def backtracking(nums,ans,t):
+            if len(t)==len(nums):
+                ans.append(t[:])
+                return 
+            for i in range(len(nums)):
+                if not used[i]:
+                    used[i]=True
+                    t.append(nums[i])
+                    backtracking(nums,ans,t)
+                    t.pop()
+                    used[i]=False
+                    
+        ans=[]
+        used=[False]*len(nums)
+        backtracking(nums,ans,[])
+
+        return ans
