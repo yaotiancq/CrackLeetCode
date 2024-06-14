@@ -1,0 +1,116 @@
+# The set [1, 2, 3, ..., n] contains a total of n! unique permutations.
+
+# By listing and labeling all of the permutations in order, we get the following sequence for n = 3:
+
+# "123"
+# "132"
+# "213"
+# "231"
+# "312"
+# "321"
+# Given n and k, return the kth permutation sequence.
+
+class Solution:
+
+"""
+Backtracking has very high time complexity
+nonlocal k 
+nonlocal ans
+make the k change at every recursive calling of backtracking fanction.
+nonlocal varible is the clarification of globle varibles in function scope.
+"""
+    def getPermutation(self, n: int, k: int) -> str:
+        
+        def backtracking(nums,s):
+            nonlocal k
+            nonlocal ans
+            if len(s)==n:
+                k-=1
+                if k==0:
+                    ans=''.join(s[:])
+                return
+            for i in range(n):
+                if not used[i]:
+                    used[i]=True
+                    s.append(nums[i])
+                    backtracking(nums,s)
+                    s.pop()
+                    used[i]=False
+            
+        nums=[str(i+1) for i in range(n)]
+        used=[False]*n
+        ans=''
+        backtracking(nums,[])
+        return ans
+
+
+"""
+Backtracking could not pass the n = 8, k = 29499 case. It need math to solve it.
+According the tree-like structure of backtracking, we can know that the k-th element in permutation follow rules.
+
+ 8*7*6*5*4*3*2*1
+=8*7*6*5*4*3*2
+=8*7*6*5*4*6
+=8*7*6*5*24
+=8*7*6*120
+=8*7*720
+=8*5040
+
+29499 // 5040 = 5
+29499 % 5040 = 4299
+
+4299 // 720 = 5
+4299 % 720 = 699
+
+699 // 120 = 5
+699 % 120 = 99
+
+.
+.
+.
+All permutaitions can be divide into n parts, every part has (n-1)! permutatiions. 
+First layer is used to decide the first number of the k-th permutation. In above case, 29499-th go pass 5 parts and 4299 permutations. So, it belongs to 6-th part.
+The first number should be 6. 
+The second layer decide the second number of the permutations. It goes pass 5 parts in second layer and 699 permutations. So, it belongs to 6-th part of second layer.
+But the number 6 has already used in the first layer, and it can not repeat. So, it goes to the next available number 7.
+
+k//n!=0 and k%n!>0 means the k-th permustation is in first part of 0 layers. k%n! can not be zero when k//n!=0, because the initial number of permutation is 1.
+
+As the math presented, every time, we use the remainder as our next new k until we get 0 remainder.
+The remainder is 0 means that 0%any=0, which means the follow rounds of calculation is useless. So, the while loop stop when the remainder is 0.
+Also, the remainder is 0 means that the k-th permutation is the last one of the part of that layer.
+We can see that the last one of part of that layer is the descending order combination of available number. So, after the while loop, we can only get available number reversely.
+
+We use used to record the usage of numbers to make sure which number is available
+"""
+import math
+class Solution:
+    def getPermutation(self, n: int, k: int) -> str:
+        
+        ans=[]
+        used=[False]*n
+        n1=n-1
+        t=k
+        while t:
+            f=math.factorial(n1)
+            a=t//f
+            b=t%f
+            if b>0:
+                a+=1
+            cnt=0
+            for i in range(1,n+1):
+                if not used[i-1]:
+                    cnt+=1
+                if cnt==a:
+                    ans.append(str(i))
+                    used[i-1]=True
+                    break
+            t=b
+            n1-=1
+
+        for i in range(n,0,-1):
+            if not used[i-1]:
+                ans.append(str(i))
+                #used[i-1]=True
+
+        return ''.join(ans)
