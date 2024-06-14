@@ -1,0 +1,85 @@
+# Given a collection of numbers, nums, that might contain duplicates, 
+# return all possible unique permutations in any order.
+
+# Example 1:
+# Input: nums = [1,1,2]
+# Output:
+# [[1,1,2],
+#  [1,2,1],
+#  [2,1,1]]
+
+# Example 2:
+# Input: nums = [1,2,3]
+# Output: [[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]
+
+class Solution:
+
+"""
+Based on the permutation I solution, we analyse that:
+              |-- 1 --|--2     [1,1,2] 
+     |--  1 --|
+     |        |-- 2 --|--1     [1,2,1]
+     |
+     |        |-- 1 --|--2     [1,1,2] 
+   --|--  1 --|
+     |        |-- 2 --|--1     [1,2,1]
+     |
+     |        |-- 1 --|--1     [2,1,1] 
+     |--  2 --|
+              |-- 1 --|--1     [2,1,1]
+We need to drop the second 1 in the first level and drop the second 1 in second level in the sub-layer of 2.
+Each layer is certain depth of recursive calling of backtracking function.
+So, in one recursive calling of backracking function, we need to make sure that the process pass the second 1.
+We can record the visited element in each layer respectively. If the element has not been visited, we go on with
+the permutation I solution process. If not, we pass this element and keep on excuting.
+"""
+    def permuteUnique(self, nums: List[int]) -> List[List[int]]:
+        
+        def backtracking(nums,ans,t):
+            if len(t)==len(nums):
+                ans.append(t[:])
+                return
+            visited={}
+            for i in range(len(nums)):
+                if nums[i] not in visited:
+                    if not used[i]:
+                        visited[nums[i]]=1
+                        used[i]=True
+                        t.append(nums[i])
+                        backtracking(nums,ans,t)
+                        t.pop()
+                        used[i]=False
+
+        ans=[]
+        used=[False]*len(nums)
+        backtracking(nums,ans,[])
+
+        return ans
+
+"""
+First, sort nums so that repeat element will stay together.
+Then, from the second repeat elememnt, if the previous element is False, means that it is in the same layer.
+According DFS, in the lower layer, the previous element must be set to True.
+Understanding and simulation of process is important for efficient algorithm design.
+"""
+    def permuteUnique(self, nums: List[int]) -> List[List[int]]:
+
+        def backtracking(nums,ans,t):
+            if len(t)==len(nums):
+                ans.append(t[:])
+                return
+            for i in range(len(nums)):
+                if used[i] or (i > 0 and nums[i] == nums[i-1] and not used[i-1]):
+                    continue
+                used[i]=True
+                t.append(nums[i])
+                backtracking(nums,ans,t)
+                t.pop()
+                used[i]=False
+
+        ans=[]
+        nums.sort()
+        used=[False]*len(nums)
+        backtracking(nums,ans,[])
+
+        return ans
