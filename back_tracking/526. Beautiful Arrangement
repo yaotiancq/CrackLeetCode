@@ -1,0 +1,51 @@
+# Suppose you have n integers labeled 1 through n. 
+# A permutation of those n integers perm (1-indexed) is considered a beautiful arrangement 
+# if for every i (1 <= i <= n), either of the following is true:
+
+# 1. perm[i] is divisible by i.
+# 2. i is divisible by perm[i].
+# Given an integer n, return the number of the beautiful arrangements that you can construct.
+
+ 
+
+# Example 1:
+
+# Input: n = 2
+# Output: 2
+# Explanation: 
+# The first beautiful arrangement is [1,2]:
+#     - perm[1] = 1 is divisible by i = 1
+#     - perm[2] = 2 is divisible by i = 2
+# The second beautiful arrangement is [2,1]:
+#     - perm[1] = 2 is divisible by i = 1
+#     - i = 2 is divisible by perm[2] = 1
+
+class Solution:
+
+"""
+Backtracking and pruning, nonlocal varible to keep record of ans. But this is not the optimal solution, the optimal solution might be DP
+The new permutation's element's index is len(t)+1, can not use i from for loop of nums.
+"""
+    def countArrangement(self, n: int) -> int:
+        
+        def backtracking(nums,t):
+            nonlocal ans
+            if len(t)==len(nums):
+                ans+=1
+                return
+
+            for i in range(len(nums)):
+                idx=len(t)+1
+                if not used[i] and (nums[i]%idx==0 or idx%nums[i]==0):
+                    used[i]=True
+                    t.append(nums[i])
+                    backtracking(nums,t)
+                    t.pop()
+                    used[i]=False
+
+        nums=[i+1 for i in range(n)]
+        used=[False]*n
+        ans=0
+        backtracking(nums,[])
+
+        return ans
