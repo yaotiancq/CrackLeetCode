@@ -1,0 +1,48 @@
+# An array is squareful if the sum of every pair of adjacent elements is a perfect square.
+# Given an integer array nums, return the number of permutations of nums that are squareful.
+# Two permutations perm1 and perm2 are different if there is some index i such that perm1[i] != perm2[i].
+
+# Example 1:
+# Input: nums = [1,17,8]
+# Output: 2
+# Explanation: [1,8,17] and [17,8,1] are the valid permutations.
+
+import math
+class Solution:
+"""
+How to prune the duplicate combination in all combinations?
+Use a dictionary to record the visited element in nums, if one element has been visited before, then the process should pass this element.
+The key idea of this method is to make sure every layer of DFS do not have duplicate element. So that the duplicate combination will be pass.
+
+math.isqrt(n) return the integer part of sqrt(n)
+"""
+    def numSquarefulPerms(self, nums: List[int]) -> int:
+
+        def isSquareful(t, num):
+            if not t:
+                return True
+            n=math.isqrt(t[-1]+num)
+            return n*n==t[-1]+num
+       
+        def backtracking(nums,t):
+            nonlocal ans
+            if len(t)==len(nums):
+                ans+=1
+                return
+            
+            visited={}
+            for i in range(len(nums)):
+                if not used[i] and nums[i] not in visited:
+                    if isSquareful(t,nums[i]):
+                        visited[nums[i]]=1
+                        used[i]=True
+                        t.append(nums[i])
+                        backtracking(nums,t)
+                        t.pop()
+                        used[i]=False
+
+        used=[False]*len(nums)
+        ans=0
+        backtracking(nums,[])
+
+        return ans
