@@ -1,0 +1,56 @@
+# You have n  tiles, where each tile has one letter tiles[i] printed on it.
+# Return the number of possible non-empty sequences of letters you can make using the letters printed on those tiles.
+
+# Example 1:
+# Input: tiles = "AAB"
+# Output: 8
+# Explanation: The possible sequences are "A", "B", "AA", "AB", "BA", "AAB", "ABA", "BAA".
+
+# Example 2:
+# Input: tiles = "AAABBC"
+# Output: 188
+
+class Solution:
+
+"""
+Backtracking is a DFS algorithm. So, it will search in depth. In this problem, we can not simply return when len(t)<=len(tiles),
+because it will stop the further depth search. In order to keep on searching in depth, we can only return when the len(t) reach
+len(tiles) and ans plus 1 every different length of t when len(t)>0. len(t)>0 is needed otherwise the empty t will count.
+
+A few tricks for backtracking.
+1. used=[False]*n
+    Keep record of element been used based on its position(index) globally. This make sure that no repeat usage of the same position element in one DFS route(start
+from beginning of candidates every time). But it will repeat value in the same position when the candidates have repeate elements.
+2. visited={}
+    Keep record of element been used based on its value locally. This make sure that no repeat value will appear in the same DFS layer, so that no repeat usage of 
+the same value element been used in the same position.
+3. sort(), loop from i+1 to len(candidates)
+    This make sure that the qualified permutation is the only ascending one(start from i or i+1 every time, filter out much of permutations). If use i, 
+then it allow repeat usage of the same position element in candidates.If use i+1, the it do not allow that, and it comes from different position candidates. 
+But, it allow repeat value in the same DFS layer if the candidates has multiple repeat values elements.
+"""
+    def numTilePossibilities(self, tiles: str) -> int:
+        
+        def backtracking(tiles, t):
+            nonlocal ans
+            if len(t)<=len(tiles):
+                if len(t)>0:
+                    ans+=1
+                if len(t)==len(tiles):
+                    return
+
+            visited={}
+            for i in range(len(tiles)):
+                if not used[i] and tiles[i] not in visited:
+                    visited[tiles[i]]=1
+                    used[i]=True
+                    t.append(tiles[i])
+                    backtracking(tiles,t)
+                    t.pop()
+                    used[i]=False
+
+        used=[False]*len(tiles)
+        ans=0
+        backtracking(tiles, [])
+
+        return ans
