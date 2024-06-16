@@ -1,0 +1,60 @@
+# Given a collection of candidate numbers (candidates) and a target number (target), 
+# find all unique combinations in candidates where the candidate numbers sum to target.
+# Each number in candidates may only be used once in the combination.
+# Note: The solution set must not contain duplicate combinations.
+
+# Example 1:
+# Input: candidates = [10,1,2,7,6,1,5], target = 8
+# Output: 
+# [
+# [1,1,6],
+# [1,2,5],
+# [1,7],
+# [2,6]
+# ]
+
+# Example 2:
+# Input: candidates = [2,5,2,1,2], target = 5
+# Output: 
+# [
+# [1,2,2],
+# [5]
+# ]
+
+class Solution:
+
+"""
+Combination is special case of permutation. When we collect the ascending order of permutation all the time, it is the combination
+of elements.
+So, in combination problem, we sort the candidates and choose the element same or larger than the upper layer element. In this way, we
+can make sure that the result we collected is the ascending order of combination.
+Equal mean that we allow the repeat usage of the same element, larger mean that we do not allow repeat usage of same element.
+
+If we allow same element repeat exist in the ans, then the lower layer loop should begin at i
+If we do not allow same element repeat exist in ans, the lower layer loop should begin at i+1
+
+In [1,2,2,2,3] target=5, the 2s will make 3 combination if we don't filter them out.
+[1,2,2],[1,2,2],[1,2,2],[2,3],[2,3],[2,3]
+The reason is that it can choose other element but same value in the same layer.  We can use a dictionary to filter those out.
+"""
+    def combinationSum2(self, candidates: List[int], target: int) -> List[List[int]]:
+        
+        def backtracking(candidates, target, k, ans, t):
+            if target<=0:
+                if target==0:
+                    ans.append(t[:])
+                return
+
+            visited={}
+            for i in range(k,len(candidates)):
+                if candidates[i] not in visited:
+                    visited[candidates[i]]=1
+                    t.append(candidates[i])
+                    backtracking(candidates, target-candidates[i], i+1, ans, t)
+                    t.pop()
+
+        ans=[]
+        candidates.sort()
+        backtracking(candidates, target, 0, ans, [])
+
+        return ans
