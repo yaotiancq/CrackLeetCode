@@ -1,0 +1,33 @@
+# Given two integers n and k, return all possible combinations of k numbers chosen from the range [1, n].
+# You may return the answer in any order.
+
+# Example 1:
+# Input: n = 4, k = 2
+# Output: [[1,2],[1,3],[1,4],[2,3],[2,4],[3,4]]
+# Explanation: There are 4 choose 2 = 6 total combinations.
+# Note that combinations are unordered, i.e., [1,2] and [2,1] are considered to be the same combination.
+
+class Solution:
+"""
+Combination is special case of permutations.
+Sort nums in ascending order and DFS in lower layer from the larger element can make this combination and each element show only once.
+If we need repeat element, it should start from itself. If we don't need different element with same value, same-value element should 
+not exist in same layer of DFS.
+"""
+    def combine(self, n: int, k: int) -> List[List[int]]:
+        
+        def backtracking(nums,ans,k,idx,t):
+            if len(t)==k:
+                ans.append(t[:])
+                return 
+            
+            for i in range(idx,len(nums)):
+                t.append(nums[i])
+                backtracking(nums,ans,k,i+1,t)
+                t.pop()
+
+        nums=[i+1 for i in range(n)]
+        ans=[]
+        backtracking(nums,ans,k,0,[])
+
+        return ans
