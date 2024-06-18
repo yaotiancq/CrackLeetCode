@@ -1,0 +1,137 @@
+# Given an m x n grid of characters board and a string word, return true if word exists in the grid.
+# The word can be constructed from letters of sequentially adjacent cells, 
+# where adjacent cells are horizontally or vertically neighboring. The same letter cell may not be used more than once.
+
+# Example 1:
+# ["A","B","C","E"]
+# ["S","F","C","S"]
+# ["A","D","E","E"]
+# Input: board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], word = "ABCCED"
+# Output: true
+
+# Example 2:
+# Input: board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], word = "SEE"
+# Output: true
+
+class Solution:
+
+"""
+For every element in candidates, DFS in every possible directions without repeat using of the same position element.
+So, the backtracking will do the DFS part, in this backtracking, the for loop is use to traversal the four possible direction.
+And this backtracking will put in a for loop with traversal all elements.
+In the pruning part of backtracking, the element selection constrain has two constrains.
+One is the used=[[False]*n for _ in range(m)], which make sure no repeat usage of the same position element.
+One is inGrid(), which make sure the current position is possible to tranversal.
+
+One special thing needed to care is, board = [["a"]], word = "a" can not pass inGrid(m,n,i+dx,j+dy). Because the backtracking need at least
+one recursive call of itself to get meaningful result in such situation. So, we might judge current node not the next layer's node.
+Because the logic is that we judge the current node and decide whether current node should be added to t or not, and this updated t will be sure
+to justified in next layer of DFS. 
+In the pruning part we should stick to the rule that it should always judge the current node of DFS.
+
+Another special reward for this problem is, what the problem DFS in is the for loop in backtracking function.
+
+But, in one of the case, this method can not pass the case (TLE):
+board =
+        [["A","A","A","A","A","A"],
+        ["A","A","A","A","A","A"],
+        ["A","A","A","A","A","A"],
+        ["A","A","A","A","A","A"],
+        ["A","A","A","A","A","A"],
+        ["A","A","A","A","A","A"]]
+word = "AAAAAAAAAAAABAA"
+Because this method is not the optimal, we have the word, so that we do not need to wait the whole length of t has been complete to decide whether
+we find the word or not. We just keep tracking of word, if the new added char do not match the word, it should return immediately.
+"""
+    def exist(self, board: List[List[str]], word: str) -> bool:
+
+        def inGrid(m,n,i,j):
+            return 0<=i<=m-1 and 0<=j<=n-1
+
+        def backtracking(board,i,j,m,n,t):
+            nonlocal ans
+            if len(t)>=len(word):
+                if ''.join(t)==word:
+                    ans=True
+                return
+
+            for dx, dy in directions:            
+                if inGrid(m,n,i,j) and not used[i][j]:
+                    used[i][j]=True
+                    t.append(board[i][j])
+                    backtracking(board,i+dx,j+dy,m,n,t)
+                    t.pop()
+                    used[i][j]=False
+    
+        m=len(board)
+        n=len(board[0])
+        used=[[False]*n for _ in range(m)]
+        directions=[[-1,0],[1,0],[0,-1],[0,1]]
+        ans=False
+    
+        for i in range(m):
+            for j in range(n):
+                backtracking(board,i,j,m,n,[])
+        return ans
+
+class Solution:
+    def exist(self, board: List[List[str]], word: str) -> bool:
+        rows, cols = len(board), len(board[0])
+        visited = [[False] * cols for _ in range(rows)]
+
+        def is_in_board(x: int, y: int) -> bool:
+            return 0 <= x < rows and 0 <= y < cols
+
+        def search_word(index: int, x: int, y: int) -> bool:
+            if board[x][y]==word[index]:
+                if index >= len(word) - 1:
+                    if index == len(word) - 1:
+                        return True
+                    else:
+                        return False
+            else:
+                return False
+
+            
+            visited[x][y] = True
+            for dx, dy in directions:
+                nx, ny = x + dx, y + dy
+                if is_in_board(nx, ny) and not visited[nx][ny] and search_word(index + 1, nx, ny):
+                    return True
+            visited[x][y] = False
+
+        directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]
+        for i in range(rows):
+            for j in range(cols):
+                if search_word(0, i, j):
+                    return True
+        return False
+
+""""
+Best solution
+How to stop, how to dfs, how to backtrack is the basic problem to think about.
+In the problem that True or False is the only needed return. We need to collect the return True or False to make meaningful return.
+Collect the lower layer's return True or False to float the True or False generated in DFS process.
+In permutation or combination problem, it use ans to collect, so the we can return None just to end dfs.
+"""
+class Solution:
+    def exist(self, board, word):
+        def backtrack(i, j, k):
+            if k == len(word):
+                return True
+            if i < 0 or i >= len(board) or j < 0 or j >= len(board[0]) or board[i][j] != word[k]:
+                return False
+            
+            temp = board[i][j]
+            board[i][j] = ''
+            
+            if backtrack(i+1, j, k+1) or backtrack(i-1, j, k+1) or backtrack(i, j+1, k+1) or backtrack(i, j-1, k+1):
+                return True
+            
+            board[i][j] = temp
+        
+        for i in range(len(board)):
+            for j in range(len(board[0])):
+                if backtrack(i, j, 0):
+                    return True
+        return False
