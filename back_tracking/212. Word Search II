@@ -1,0 +1,124 @@
+# Given an m x n board of characters and a list of strings words, return all words on the board.
+# Each word must be constructed from letters of sequentially adjacent cells, 
+# where adjacent cells are horizontally or vertically neighboring. The same letter cell may not be used more than once in a word.
+
+# Example 1:
+# Input: board = [["o","a","a","n"],["e","t","a","e"],["i","h","k","r"],["i","f","l","v"]], words = ["oath","pea","eat","rain"]
+# Output: ["eat","oath"]
+
+# Example 2:
+# Input: board = [["a","b"],["c","d"]], words = ["abcb"]
+# Output: []
+
+class TrieNode:
+    def __init__(self):
+        self.children={}
+        self.isEndOfWord=False
+
+class Trie:
+    def __init__(self):
+        self.root=TrieNode()
+
+    def insert(self,word):
+        node=self.root
+        for c in word:
+            if c not in node.children:
+                node.children[c]=TrieNode()
+            node=node.children[c]
+        node.isEndOfWord=True
+
+    # def search(self,word):
+    #     node=self.root
+    #     for c in word:
+    #         if c not in node.children:
+    #             return False
+    #         node=node.children[c]
+    #     return node.isEndOfWord
+
+    # def startWith(self, prefix):
+    #     node=self.root
+    #     for c in prefix:
+    #         if c not in node.children:
+    #             return False
+    #         node=node.children[c]
+    #     return True       
+
+class Solution:
+
+"""
+The optimal solution is use prefix tree trie in DFS process.
+
+Prefix tree trie is a tree structure to lower the insert, search time complextiy in word search problem in list of words.
+In word list, if we want to find out whether the word list contain a word or not, the time complexitiy is O(n*k). 
+k is the length of word, n is the length of word list.
+For example:
+            [goog, googl, google, bai, baidu, bab, gooi]  word=google
+Array like data structure is not efficient for word search proble. We can use a prefix tree to store all the words in word list.
+                           root
+                           / \
+                          g   b
+                         /     \
+                        o       a
+                       /       / \
+                      o  (bab)b   i (bai) 
+                     / \           \
+             (goog) g   i (gooi)    d 
+                   /                 \
+          (googl) l                   u  (baidu)
+                 /
+       (google) e
+If we find a word in this trie, the time complexity is O(k).
+Every node of this tree is a TrieNode(), which has children dictionary and word ending flag is_end_of_word, or more attributes, like an value to record
+the valid word in current node.
+
+For every char in char map, we filter it by checking it is in root.children or not, so that we could pass a few invalid start char. Backtracking algorithm
+has very high time complexity, the fewer times we excute it the better. The pruning before backtracking is also important.
+Probaly, in most of the time, we need to judge the first element. In order to do that, the pruning can not place at the beginning of backtracking fanction.
+The format should be: use current node/element, judge it and collect,  narrow DFS path, judge the next layer and DFS in it, restore DFS path.
+DFS happen at the children node of one of trie path. 4 directions narrow the choose of char in char map, the candidate will be searched in trie, the remain
+will go deeper in DFS. In this way, we pruning much of the path in this problem.
+
+One special move to reduce much of the time complexity: we remove the node which don't have children from the trie tree.
+Because trie is de word tree, we follow DFS in this tree. If we reach the leaf with no children, we must find all words of words list which are included by this
+trie route. We no longer need to DFS in this route anymore. So, we can safely delete the node backward until we meet the biforcate node(it has children means
+that it has not been found in char map yet). This pruning strategy is highly efficient because we prune the DFS routes as we loop over char map.
+
+The setting: currNode.isEndOfWord=False is needed. Because same word can happen at different location in char map, and the route in trie might still remain.
+So, the will be duplicate in answer. This setting delete the word we find in words list. 
+
+
+"""
+    def findWords(self, board: List[List[str]], words: List[str]) -> List[str]:
+        
+        def backtracking(i,j,parent,ans,word):
+            
+            c=board[i][j]
+            currNode=parent.children[c]
+            word+=c
+
+            if currNode.isEndOfWord:
+                ans.append(word)
+                currNode.isEndOfWord=False
+
+            board[i][j]='.'
+            for di, dj in [[-1,0],[1,0],[0,-1],[0,1]]:
+                ni,nj=i+di,j+dj
+                if 0<=ni<=len(board)-1 and 0<=nj<=len(board[0])-1:
+                    if board[ni][nj] in currNode.children:
+                        backtracking(ni,nj,currNode,ans,word)
+            board[i][j]=c
+
+            if not currNode.children:
+                parent.children.pop(c)
+
+        trie=Trie()
+        for word in words:
+            trie.insert(word)
+
+        ans=[]           
+        for i in range(len(board)):
+            for j in range(len(board[0])):
+                if board[i][j] in trie.root.children:
+                    backtracking(i,j,trie.root,ans,'')
+                
+        return ans
