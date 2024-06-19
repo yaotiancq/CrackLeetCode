@@ -1,0 +1,54 @@
+class Solution:
+
+"""
+Backtracking. No other pruning startegy, using directions is the only pruning strategy.
+When to stop? meet end or no more moves. When there is no more moves, the backtracking function will not DFS in depth but to stop and return at the 
+end of the code.
+
+Generally, we have two way to count. One is use nonlocal cnt to declare a nonlocal varibles, this varible will be the same varible at each node.
+Another way is return 1 or 0 when meet leaf node in DFS tree, use local varible to collect all the lower layer return values and return this collection
+for upper layer.
+"""
+    def uniquePathsIII(self, grid: List[List[int]]) -> int:
+        
+        def backtracking(start,k):
+
+            if start==end:
+                if k==0:
+                    return 1
+                return 0
+
+            res=0
+
+            i,j=start
+            temp=grid[i][j]
+            grid[i][j]=-1
+            for dx, dy in [[-1,0],[1,0],[0,-1],[0,1]]:
+                ni, nj=i+dx, j+dy
+                if 0<=ni<=m-1 and 0<=nj<=n-1:
+                    if grid[ni][nj]==0 or grid[ni][nj]==2:
+                        res+=backtracking([ni,nj],k-1)
+            grid[i][j]=temp
+
+            return res
+
+        m=len(grid)
+        n=len(grid[0])
+
+        start=[]
+        end=[]
+        obst=0
+        for i in range(m):
+            for j in range(n):
+                if grid[i][j]==1:
+                    start.append(i)
+                    start.append(j)
+                if grid[i][j]==2:
+                    end.append(i)
+                    end.append(j)
+                if grid[i][j]==-1:
+                    obst+=1
+
+        k=m*n-obst-1
+
+        return backtracking(start,k)
