@@ -1,0 +1,38 @@
+# The n-queens puzzle is the problem of placing n queens on an n x n chessboard such that no two queens attack each other.
+# Given an integer n, return the number of distinct solutions to the n-queens puzzle.
+
+# Example 1:
+# Input: n = 4
+# Output: 2
+# Explanation: There are two distinct solutions to the 4-queens puzzle as shown.
+
+class Solution:
+
+"""
+Just as N-queens I
+"""
+    def totalNQueens(self, n: int) -> int:
+        
+        def isAvailable(row,col,t):
+            for i in range(len(t)):
+                if col==t[i] or col==t[i]-(row-i) or col==t[i]+(row-i):
+                    return False
+            return True
+
+        def backtracking(row, n, t):
+            
+            # if it is not a possible route, row will never reach n, it will false the judgement.
+            # then it will return initial res=0
+            if row==n:
+                return 1
+
+            res=0
+            for col in range(n):
+                if isAvailable(row,col,t):
+                    t.append(col)
+                    res+=backtracking(row+1,n,t)
+                    t.pop()
+
+            return res
+
+        return backtracking(0,n,[])
