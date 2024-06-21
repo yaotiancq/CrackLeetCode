@@ -1,0 +1,66 @@
+# Given the root of a binary tree, determine if it is a valid binary search tree (BST).
+# A valid BST is defined as follows:
+# The left subtree of a node contains only nodes with keys less than the node's key.
+# The right subtree of a node contains only nodes with keys greater than the node's key.
+# Both the left and right subtrees must also be binary search trees.
+ 
+# Example 1:
+# Input: root = [2,1,3]
+# Output: true
+
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+
+"""
+Left sub-tree is restrictly smaller than the root, right sub-tree is restrictly larger than the root.
+
+                       (a0)
+                     /      \
+           (?,a0) (a1)      (a2)  (a0,?)
+                 /    \     /   \
+       (?,a1)  (a3)  (a4) (a5) (a6)  (a2.?)
+                  (a1,a0) (a0,a2) 
+For every node in the tree, if we DFS in this tree, if we meet node's left child, the left child need to update its upper bound.
+If we meet node's right child, the right child need to update its lower bound. The bound comes from node's parent node. This algoritm 
+follow the DFS process.
+We just need to update every node's lower and upper bound, then check its value.
+"""
+    def isValidBST(self, root: Optional[TreeNode]) -> bool:
+
+        def dfs(root,mi,ma):
+
+            if not root:
+                return True
+
+            return mi<root.val<ma and dfs(root.left,mi,root.val) and dfs(root.right,root.val,ma)
+
+        return dfs(root,float('-inf'),float('inf'))
+
+"""
+BST tree == inorder traversal is restrictly ascending.
+"""
+
+        def inorder(root):
+
+            if root:
+                if not inorder(root.left):
+                    return False
+                if res==[]:
+                    res.append(root.val)
+                else:
+                    if res[-1]>=root.val:
+                        return False
+                    else:
+                        res.append(root.val)
+                if not inorder(root.right):
+                    return False
+            return True
+
+        res=[]
+
+        return inorder(root)
