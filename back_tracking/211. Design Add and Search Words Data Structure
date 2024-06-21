@@ -1,0 +1,75 @@
+# Design a data structure that supports adding new words and finding if a string matches any previously added string.
+# Implement the WordDictionary class:
+
+# WordDictionary() Initializes the object.
+# void addWord(word) Adds word to the data structure, it can be matched later.
+# bool search(word) Returns true if there is any string in the data structure that matches word or false otherwise. 
+# word may contain dots '.' where dots can be matched with any letter.
+
+
+"""
+It is DFS to search along a tree. But in the original verison of tire.search(), we don't need to go back. So that we can just use 
+for loop to finish the DFS work. But in this problem, the '.' need to loop over the node.children dictionary. And, we want to do 
+typical DFS search along the node.children dictionary. Return True if any of the route return True.
+In dfs design, we need to figure out when to stop, when and how to go deep.
+
+In this problem or possible tree like problem, we can not use node=node.children[c]. Because we need to loop over current node's children.
+This assignment will change the looping node. When meet covering assignment in a loop, great care is needed to avoid unexpected error.
+"""
+class TrieNode:
+
+    def __init__(self):
+        self.children={}
+        self.is_end_of_word=False
+
+class WordDictionary:
+
+    def __init__(self):
+        self.root=TrieNode()
+
+    def addWord(self, word: str) -> None:
+        node=self.root
+        for c in word:
+            if c not in node.children:
+                node.children[c]=TrieNode()
+            node=node.children[c]
+        node.is_end_of_word=True
+
+    def search(self, word: str) -> bool:
+        
+        def dfs(node,idx):
+
+            if idx==len(word):
+                return node.is_end_of_word
+            
+            if word[idx]=='.':
+                for c in node.children:
+                    nnode=node.children[c]
+                    if dfs(nnode,idx+1):
+                        return True
+                return False
+
+            if word[idx] in node.children:
+                nnode=node.children[word[idx]]
+                return dfs(nnode,idx+1)
+
+        return dfs(self.root, 0)
+
+"""not as straight forward as the standard one"""
+    def search(self, word: str) -> bool:
+        
+        def dfs(node,word,idx):
+
+            for i in range(idx,len(word)):
+                if word[i] in node.children:
+                    node=node.children[word[i]]
+                else:
+                    if word[i]=='.':
+                        for key in node.children:
+                            nnode=node.children[key]
+                            if dfs(nnode,word,i+1):
+                                return True
+                    return False
+            return node.is_end_of_word
+
+        return dfs(self.root, word, 0)
