@@ -1,0 +1,34 @@
+#Given a binary tree, determine if it is 
+#height-balanced.
+
+#Example 1:
+#Input: root = [3,9,20,null,null,15,7]
+#Output: true
+
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+
+"""
+For every node, we need to calculate the height of the left sub-tree and the right sub-tree, and traverse all nodes.
+The height of the sub-tree is a DFS question. 
+Traverse all nodes is also a DFS question.
+We need to make sure the current root's left sub-tree and the right sub-tree and also the every node's sub-tree
+"""
+    def isBalanced(self, root: Optional[TreeNode]) -> bool:
+        
+        def dfs(root):
+            
+            if not root:
+                return 0
+
+            return max(dfs(root.left),dfs(root.right))+1
+
+        if not root:
+            return True
+
+        return abs(dfs(root.left)-dfs(root.right))<=1 and self.isBalanced(root.left) and self.isBalanced(root.right)
