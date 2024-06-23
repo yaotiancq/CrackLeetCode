@@ -1,0 +1,42 @@
+# Given the root of a binary tree, check whether it is a mirror of itself (i.e., symmetric around its center).
+
+# Example 1:
+# Input: root = [1,2,2,3,4,4,3]
+# Output: true
+
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+
+"""
+Recursively compare node's left child and right child, starting from root.
+
+                     root
+                 /          \
+               /              \
+             o                 o
+           /    \            /    \
+         o        o        o        o
+       /   \    /   \    /   \    /   \ 
+      o     o  o     o  o     o  o     o  
+"""
+    def isSymmetric(self, root: Optional[TreeNode]) -> bool:
+        
+        def dfs(node1, node2):
+            
+            if node1==None and node2==None:
+                return True
+            if node1==None or node2==None:
+                return False
+            if node1.val!=node2.val:
+                return False
+            
+            return dfs(node1.left, node2.right) and dfs(node1.right, node2.left)
+        
+        if not root:
+            return True
+        return dfs(root.left, root.right)
