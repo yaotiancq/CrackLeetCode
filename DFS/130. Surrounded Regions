@@ -1,0 +1,45 @@
+# You are given an m x n matrix board containing letters 'X' and 'O', capture regions that are surrounded:
+# Connect: A cell is connected to adjacent cells horizontally or vertically.
+# Region: To form a region connect every 'O' cell.
+# Surround: The region is surrounded with 'X' cells if you can connect the region with 'X' cells and
+# none of the region cells are on the edge of the board.
+# A surrounded region is captured by replacing all 'O's with 'X's in the input matrix board.
+
+# Example 1:
+# Input: board = [["X","X","X","X"],["X","O","O","X"],["X","X","O","X"],["X","O","X","X"]]
+# Output: [["X","X","X","X"],["X","X","X","X"],["X","X","X","X"],["X","O","X","X"]]
+
+class Solution:
+"""
+Two way to do it: 
+One is loop over all the element in the center of matrix. For each element, if the element is O, then DFS in it to find whether it connect the edge O. 
+But, this method has higher time complexity. 
+Another is loop over only the element O which on the edge of matrix. For each element, DFS in it ant mark it as different char such as "*" . Then, we can
+safely mark the remain O's as X, and mark all * as O. 
+"""
+    def solve(self, board: List[List[str]]) -> None:
+        """
+        Do not return anything, modify board in-place instead.
+        """
+        def dfs(i,j):
+
+            if i<0 or i>len(board)-1 or j<0 or j>len(board[0])-1:
+                return
+            
+            if board[i][j]=='O':
+                board[i][j]='*'
+                for di,dj in [[-1,0],[1,0],[0,-1],[0,1]]:
+                    ni,nj=i+di,j+dj
+                    dfs(ni,nj)
+
+        for i in range(len(board)):
+            for j in range(len(board[0])):
+                if i==0 or i==len(board)-1 or j==0 or j==len(board[0])-1:
+                    dfs(i,j)
+
+        for i in range(len(board)):
+            for j in range(len(board[0])):
+                if board[i][j]=="*":
+                    board[i][j]='O'
+                elif board[i][j]=="O":
+                    board[i][j]="X"
