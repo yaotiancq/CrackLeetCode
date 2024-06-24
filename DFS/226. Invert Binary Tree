@@ -1,0 +1,33 @@
+# Given the root of a binary tree, invert the tree, and return its root.
+
+# Example 1:
+# Input: root = [4,2,7,1,3,6,9]
+# Output: [4,7,2,9,6,3,1]
+
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+
+"""
+Whether swiching left sub-tree and right sub-tree from root or swiching from the bottom is OK.
+The bottom means that DFS in left sub-tree and right sub-tree, traverse every node's left side and right side, so that the traverse is complete.
+"""
+    def invertTree(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+
+        def dfs(root):
+            if not root or root.left is None and root.right is None:
+                return 
+
+            root.left, root.right = root.right, root.left
+
+            self.invertTree(root.left)
+            self.invertTree(root.right)
+
+        node=root
+        dfs(node)
+
+        return root
