@@ -22,6 +22,8 @@ Second, assemble the left and right sub-tree
 One special thing is, the root.right we just assemble on the root.right might be a few nodes.
 So, we need to loop to the leaf of the branch before we assmeble the original right arm.
 
+This algorithm should be done from the bottom of the tree, so the post-order is good choice
+
 The logic within the function should be used in every layer
 """
     def flatten(self, root: Optional[TreeNode]) -> None:
