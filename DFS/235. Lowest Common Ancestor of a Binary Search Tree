@@ -1,0 +1,69 @@
+# Given a binary search tree (BST), find the lowest common ancestor (LCA) node of two given nodes in the BST.
+# According to the definition of LCA on Wikipedia: “The lowest common ancestor is defined between two 
+# nodes p and q as the lowest node in T that has both p and q as descendants (where we allow a node to be a descendant of itself).”
+
+# Example 1:
+# Input: root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 8
+# Output: 6
+# Explanation: The LCA of nodes 2 and 8 is 6.
+
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution:
+
+"""
+Special method for BST(balanced search tree) is that we can identified the location of any node fast.
+If target node's value is smaller than root.val, then it will be in the left sub-tree. If not, it will be in the right sub-tree.
+If the two target nodes are in different sub-tree, the root will be the common ancestor.
+If they are in the same sub-tree, we can recursively do above process in this sub-tree.
+"""
+    def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+
+        if not root or not p or not q:
+            return 
+
+        if p.val<root.val and q.val<root.val:
+            return self.lowestCommonAncestor(root.left,p,q)
+
+        elif p.val>root.val and q.val>root.val:
+            return self.lowestCommonAncestor(root.right,p,q)
+
+        return root
+
+"""
+Common version of common ancestor. What we need to do in a complecated way is that we need to confirm target node is in tree.
+If both of the node in a tree, then, at least, the root of this tree will be their common ancestor.
+Then, we look into the left subtree and right subtree to check if they are in these subtree.
+The time complexity is higher than using BST special. But, it can be used in any binary tree.
+"""
+
+    def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+
+        def isExist(root, node) -> bool:
+
+            if not root:
+                return False
+            
+            if root==node:
+                return True
+            else:
+                return isExist(root.left, node) or isExist(root.right,node)
+        
+        def dfs(root,p,q,ans):
+            if not root:
+                return
+
+            if isExist(root,p) and isExist(root,q):
+                ans.append(root)
+            
+            dfs(root.left,p,q,ans)
+            dfs(root.right,p,q,ans)
+
+        ans=[]
+        dfs(root,p,q,ans)
+        return ans[-1]
