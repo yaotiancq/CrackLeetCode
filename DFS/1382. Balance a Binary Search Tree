@@ -1,0 +1,55 @@
+# Given the root of a binary search tree, return a balanced binary search tree with the same node values.
+# If there is more than one answer, return any of them.
+# A binary search tree is balanced if the depth of the two subtrees of every node never differs by more than 1.
+
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+
+"""
+Using inorder traversal to get the value list of all the nodes, then assign the middle of the list as the the BST root value.
+And recursively do this in the left sub-tree and left half of the value list, also same with the right sub-tree.
+
+How to build a tree? There is a format here:
+
+recursive function ():
+  stop condition: use to stop the recursive call
+  val=?
+  root=TreeNode(val)
+  root.left= recursive function()
+  root.right= recursive function()
+  return root
+
+It is better not to generate a treenode outside of the function and pass it through parameters. Use this format.
+"""
+    def balanceBST(self, root: TreeNode) -> TreeNode:
+        
+        def inorder(root,ans):
+
+            if not root:
+                return 
+
+            inorder(root.left,ans)
+            ans.append(root.val)
+            inorder(root.right,ans)
+
+        def buildBST(nums):
+            if not nums:
+                return
+
+            k=len(nums)//2
+            val=nums[k]
+
+            root=TreeNode(val)
+            root.left=buildBST(nums[:k])
+            root.right=buildBST(nums[k+1:])
+
+            return root
+
+        ans=[]
+        inorder(root,ans)
+        return buildBST(ans)
