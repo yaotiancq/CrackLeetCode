@@ -1,0 +1,32 @@
+# The Fibonacci numbers, commonly denoted F(n) form a sequence, called the Fibonacci sequence, 
+# such that each number is the sum of the two preceding ones, starting from 0 and 1. That is,
+
+# F(0) = 0, F(1) = 1
+# F(n) = F(n - 1) + F(n - 2), for n > 1.
+# Given n, calculate F(n).
+
+class Solution:
+
+"""
+What proble is proper for DP algorithm to soleve?
+The answer is the problem whose status can be deduced from last status. Just like this one:  F(n) = F(n - 1) + F(n - 2), for n > 1.
+This is quite different from greedy method.
+
+We need to make sure the following thing before actual coding:
+First, what is the status which can be deduced from last status. Sometimes, we figure out what the deduction relationship dp[i]=f(dp[i-1],dp[i-2],...), then the status dp[i].
+Second, what will be the initial value for this duduction relationship.
+Third, How should it loop through dp array.
+"""
+    def fib(self, n: int) -> int:
+        
+        if n<=1:
+            return n
+
+        dp=[0]*(n+1)
+        dp[0]=0
+        dp[1]=1
+
+        for i in range(2,n+1):
+            dp[i]=dp[i-1]+dp[i-2]
+
+        return dp[-1]
