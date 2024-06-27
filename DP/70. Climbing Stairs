@@ -15,18 +15,20 @@ In this problem, apparently, the ways we step on n staircase is decided by previ
 We can either step on n from n-1 or n-2(1 or 2 steps). So, if we have f(n-1) ways and f(n-2) ways to step on n-1 and n-2.
 Then, f(n)=f(n-1)+f(n-2). That is our deduction relationship.
 
+1 <= n <= 45
+So, we do not need to consider n=0 case.
 """
     def climbStairs(self, n: int) -> int:
         
         dp=[0]*(n+1)
 
-        if n<=1:
-            return 1
+        if 1<=n<=2:
+            return n
 
-        dp[0]=1
         dp[1]=1
+        dp[2]=2
 
-        for i in range(2,n+1):
+        for i in range(3,n+1):
             dp[i]=dp[i-2]+dp[i-1]
 
         return dp[-1]
