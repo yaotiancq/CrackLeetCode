@@ -21,6 +21,7 @@ So, dp[2]=min(dp[0]+cost[0], dp[1]+cost[1]).
 The same situation with n>=2, the deduction relationship is above. dp[i] is the cost we should pay to get on i-th index.
 
 The most important thinking is, what steps we should do if we want to get current status/answer. 
+If we do not understand clearly the process of it, we'd better start simulation from the mimimal situation.
 """
     def minCostClimbingStairs(self, cost: List[int]) -> int:
         
