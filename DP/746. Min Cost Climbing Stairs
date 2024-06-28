@@ -1,0 +1,35 @@
+# You are given an integer array cost where cost[i] is the cost of ith step on a staircase. 
+# Once you pay the cost, you can either climb one or two steps.
+# You can either start from the step with index 0, or the step with index 1.
+# Return the minimum cost to reach the top of the floor.
+
+# Example 1:
+# Input: cost = [10,15,20]
+# Output: 15
+# Explanation: You will start at index 1.
+# - Pay 15 and climb two steps to reach the top.
+# The total cost is 15.
+
+class Solution:
+
+"""
+This is not easy to understand its meaning. It is a bit special.
+If we want to get on index=0, we don't need to pay any cost, the dp[0]=0.
+If we want to get on index=1, we don't need to pay any cost, we can either start from the step with index 0 or index 1. dp[1]=0
+If we want to get on index=2, we might pay 10 and climb two steps to get on index=2, or pay 15 and climb one step to get on index=2.
+So, dp[2]=min(dp[0]+cost[0], dp[1]+cost[1]). 
+The same situation with n>=2, the deduction relationship is above. dp[i] is the cost we should pay to get on i-th index.
+
+The most important thinking is, what steps we should do if we want to get current status/answer. 
+"""
+    def minCostClimbingStairs(self, cost: List[int]) -> int:
+        
+        dp=[0]*(len(cost)+1)
+
+        dp[0]=0
+        dp[1]=0
+
+        for i in range(2,len(cost)+1):
+            dp[i]=min(dp[i-2]+cost[i-2],dp[i-1]+cost[i-1])
+
+        return dp[-1]
