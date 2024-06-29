@@ -54,7 +54,7 @@ Otherwise we can still use dp[i][j]=dp[i-1][j]+dp[i][j-1] to denote the ways we 
 
 
 """
-
+We only need the [0][0] as the initial value.
 """
     def uniquePathsWithObstacles(self, obstacleGrid: List[List[int]]) -> int:
         
