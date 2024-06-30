@@ -1,0 +1,67 @@
+# Given an integer array nums, return true if you can partition the array into two subsets such that the sum of the elements 
+# in both subsets is equal or false otherwise.
+
+# Example 1:
+# Input: nums = [1,5,11,5]
+# Output: true
+# Explanation: The array can be partitioned as [1, 5, 5] and [11].
+
+# Example 2:
+# Input: nums = [1,2,3,5]
+# Output: false
+# Explanation: The array cannot be partitioned into equal sum subsets.
+
+class Solution:
+
+"""
+This is an application of 0/1 knapsack.
+
+0/1 knapsack problem.
+There are 𝑛 items and a backpack that can carry a maximum weight of 
+𝑤. The weight of the 𝑖-th item is weight[𝑖], and its value is value[𝑖]. Each item can only be used once. 
+Determine which items to put in the backpack to maximize the total value of the items.
+
+For example:
+       weight  value
+item0    1      15
+item1    3      20
+item2    4      30
+
+Basical idea for this problem. We can use brutal force to solve this problem. Every item has two status, in backpack or not in backpack.
+So, the time complexity for brutal force is O(2^n).  Every item is a path, we can choose go through it or not. We can use backtracking to find the max path.
+The time complexity is sure too high. We might use dp to solve it.
+Is there sub-problem that can be solved with the same solution? In intuition, we know that the solution will be the same if we have different item or weight limit
+backpack. In more formal words, the optimal solution can be constructed from the optimal solutions of its sub-problems. In 0/1 backpack problem, if we know the optimal
+solutin of a knapsack with capacity j using i-1 items, we can know the optimal solution of knapsack with capacity j using i items.
+
+We have two choice when we deal with each item:
+Do not choose i-th item, the optimal solution is optimal solution that i-1 items in capacity j knapsack.
+dp[i-1][j]
+Choose i-th item, the optimal solution is optimal solution that i-1 items in capacity j-weight[i] plus value[i] 
+dp[i-1][j-weight[i]]+value[i]
+This process present the choice of each decision. The multiple simular choices of each decision is the main trait of DP.
+Then the deduction relationship is: dp[i][j]=max(dp[i-1][j],dp[i-1][j-weight[i]]+value[i])
+
+0/1 knapsack proble's DP array can also be 1-D array.
+dp[j]=max(dp[j],dp[j-weight[i]]+value[i])
+Because in 2-D relationship, we just use upper layer dp[i-1], the present value in dp[i] is the needed upper layer for next layer. We do not need any further past
+values. But, in order not to false use present layer value, the j need to loop reversely, or dp[j-weight[i]] will refer current layer value. The current layer is for
+i-th item, the previous layer is for i-1-th layer. Otherwise, we might use same item twice.
+And we can not mix the order of i loop and j loop. The item loop need to be outside, the weight limit loop should be the inner loop. This order make our choosing logic
+work: we make desicion of whether i-th item should be in backpack or not, this desicion can be different in different capacity j.
+"""
+    def canPartition(self, nums: List[int]) -> bool:
+        
+        target=sum(nums)//2
+        if sum(nums)%2!=0:
+            return False
+
+        dp=[0]*(target+1)
+
+        for num in nums:
+            for j in range(target,num-1,-1):
+                dp[j]=max(dp[j],dp[j-num]+num)
+
+        if dp[-1]==target:
+            return True
+        return False
