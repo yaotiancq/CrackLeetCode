@@ -1,0 +1,119 @@
+# You are given an integer array nums and an integer target.
+# You want to build an expression out of nums by adding one of the symbols '+' and '-' before each integer in nums and then concatenate all the integers.
+# For example, if nums = [2, 1], you can add a '+' before 2 and a '-' before 1 and concatenate them to build the expression "+2-1".
+# Return the number of different expressions that you can build, which evaluates to target.
+
+# Example 1:
+# Input: nums = [1,1,1,1,1], target = 3
+# Output: 5
+# Explanation: There are 5 ways to assign symbols to make the sum of nums be target 3.
+# -1 + 1 + 1 + 1 + 1 = 3
+# +1 - 1 + 1 + 1 + 1 = 3
+# +1 + 1 - 1 + 1 + 1 = 3
+# +1 + 1 + 1 - 1 + 1 = 3
+# +1 + 1 + 1 + 1 - 1 = 3
+
+# Example 2:
+# Input: nums = [1], target = 1
+# Output: 1
+
+class Solution:
+
+"""
+Regular 0/1 snapsack problem is solving maximum value under combination. But it can also deal with the number of combination problem.
+
+How to translate this problem into a 0/1 snapsack problem?
+left-right=target
+left+right=sum(nums)
+left=(sum(nums)+target)//2
+Given target and nums, the left is one and only. And all numbers is integer, so if (sum(nums)+target) can not be divisible by 2, it has no possible of num in nums
+to get left.
+So, we just choose num in nums to get left. This is a 0/1 snapsack problem.
+
+But the key different for counting number of combinations is that the dp[j] definition and deduction relationship is different.
+d[j] denote the number of combination when the capacity is j. For each num in nums, dp[j-num] denote one possible combination which having no num in choosen
+combination. So, dp[j]+=dp[j-num].
+dp[0]=1, because when capacity is 0, none of num in nums should be choosen. And that situation stand for 1 combination. The other initial value should be 0, 
+because dp[j-num] might not be possible. It need to be deduct from dp[0]=1
+"""
+    def findTargetSumWays(self, nums: List[int], target: int) -> int:
+
+        if abs(target)>sum(nums):
+            return 0
+
+        if (sum(nums)+target)%2!=0:
+            return 0
+
+        t=(sum(nums)+target)//2
+
+        dp=[0]*(t+1)
+        dp[0]=1
+
+        for num in nums:
+            for j in range(t,num-1,-1):
+                dp[j]+=dp[j-num]
+
+        return dp[-1]
+
+
+"""
+Backtracking, this implementation has serious drawback. Because it return 1 when meet k=0, it do not make difference between the number of 0s. It just ignore 
+the 0 when k=0. But 0 in different position make different combinations. So, we need to make patch of this method, when k meet 0, we count the number of 0 after idx.
+
+"""
+    def findTargetSumWays(self, nums: List[int], target: int) -> int:
+
+        if abs(target)>sum(nums):
+            return 0
+
+        if (sum(nums)+target)%2!=0:
+            return 0
+
+        k=(sum(nums)+target)//2
+
+        def backtracking(k,idx):
+            
+            if k<0:
+                return 0
+            
+            if k==0:
+                return 2**nums[idx:].count(0) # 1
+
+            res=0    
+            for i in range(idx,len(nums)):
+                res+=backtracking(k-nums[i],i+1)
+
+            return res
+                    
+        nums.sort()
+
+        return backtracking(k, 0)
+
+"""
+Of course, we can use list wo store count of combination and do not return, just wait it traversal all possible route. Return it length.
+"""
+    def findTargetSumWays(self, nums: List[int], target: int) -> int:
+
+        if abs(target)>sum(nums):
+            return 0
+
+        if (sum(nums)+target)%2!=0:
+            return 0
+
+        k=(sum(nums)+target)//2
+
+        def backtracking(ans,t,idx):
+            
+            if t==k:
+                ans.append(0)
+                
+            for i in range(idx,len(nums)):
+                backtracking(ans,t+nums[i],i+1)
+                    
+        nums.sort()
+        ans=[]
+        backtracking(ans, 0, 0)
+
+        return len(ans)
+        
+         
