@@ -1,0 +1,45 @@
+# You are given an array of integers stones where stones[i] is the weight of the ith stone.
+# We are playing a game with the stones. On each turn, we choose any two stones and smash them together.
+# Suppose the stones have weights x and y with x <= y. The result of this smash is:
+# If x == y, both stones are destroyed, and
+# If x != y, the stone of weight x is destroyed, and the stone of weight y has new weight y - x.
+# At the end of the game, there is at most one stone left.
+# Return the smallest possible weight of the left stone. If there are no stones left, return 0.
+
+# Example 1:
+# Input: stones = [2,7,4,1,8,1]
+# Output: 1
+# Explanation:
+# We can combine 2 and 4 to get 2, so the array converts to [2,7,1,8,1] then,
+# we can combine 7 and 8 to get 1, so the array converts to [2,1,1,1] then,
+# we can combine 2 and 1 to get 1, so the array converts to [1,1,1] then,
+# we can combine 1 and 1 to get 0, so the array converts to [1], then that's the optimal value.
+
+# Example 2:
+# Input: stones = [31,26,33,21,40]
+# Output: 5
+
+class Solution:
+
+"""
+How does this problem convert to 0/1 snapsack problem?
+First, this is a combination problme. Choosing any of the element could be one solution. And there is no order in these choosing elements.
+Second, in the process of geting right solution, we need to try our best to make the remain number as small as possible. There is a path choosing process and we need
+        push it to some kind of limits.
+Third, in the detail problem, if we want to get smllest number, we need to divide the number into two close part. The best we can have is the two parts are equal.
+        So, the remain is 0. So, we try to make this two part close to each other. That is the two part are close to half of the sum of array. The problem can be 
+        convert to choosing some number to get colse to halp of the sum of array. That is a 0/1 snapsack problem. The last of dp array is the best we can get.
+
+Should take care of that the difference dp[-1] from half of sum of array must multiple 2. Any part smaller than half mean other part have twice larger difference.
+"""
+    def lastStoneWeightII(self, stones: List[int]) -> int:
+        
+        target=sum(stones)//2
+
+        dp=[0]*(target+1)
+
+        for i in range(len(stones)):
+            for j in range(target,stones[i]-1,-1):
+                dp[j]=max(dp[j],dp[j-stones[i]]+stones[i])
+
+        return (target-dp[-1])*2 if sum(stones)%2==0 else (target-dp[-1])*2+1
