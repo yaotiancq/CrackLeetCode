@@ -22,6 +22,49 @@ In 0/1 snapsack problem, in order to make suer that we do not select the same it
 have such limitations, so we just loop capacity j normal order.
 
 The number of combination, dp[0]=1, dp[j]+=dp[j-coin]
+
+About the order of looping:
+When we don't need to get number of combinations or the number of permutations, such as max value, in 0/1 snapsack prolem's 2-D DP implementation and unbounded 
+snapsack problem, whatever the order of looping is, it work fine. But, in 0/1 snapsack problem 1-D DP implementation, the capacity loop must be the inner loop, 
+otherwise, the snapsack will have only one item.
+
+For example:
+         w    v
+item0    1    15
+item1    3    20
+item2    4    30
+
+dp[j]=max(dp[j], dp[j-w[i]]+v[i])
+DP outer loop is item:
+            <----
+item0: [0, 15, 15, 15, 15]
+item1: [0, 15, 15, 20, 35]
+item2: [0, 15, 15, 20, 35]
+We can see that, every lower level of DP array, its calculation is based on the previous upper level DP array, which contain 0 or more items in snapsack. This result
+is what we need.
+DP outer loop is capacity:
+Capacity4: [0, 0, 0, 20, 30]
+Capacity3: [0, 0, 15, 20, 30]
+Capacity2: [0, 15, 15, 20, 30]
+Capacity1: [0, 15, 15, 20, 30]
+In this order, it calculate dp[4] first, then dp[3], dp[2], dp[1]. 
+dp[4]=max(dp[4],dp[3]+15,dp[1]+20,dp[0]+30)
+dp[3]=max(dp[3],dp[2]+15,dp[0]+20)
+Because capacity reverse loop, every calculation do not use update dp. It only use initial value. So, as result, there is only one item in snapsack. If capacity loop 
+is normal order, it can use update dp. But this is unbounded snapsack problem.
+
+Although, in solving max value in unbounded snapsack problem, we can ignore the looping order of item or capacity. When the real question come to number of combination
+or permutation. The order of looping does matter.
+The important summary is here:
+--- The item loop is outer loop and capacity is inner loop: the result is number of combinations.
+--- The capacity loop is outer loop and item loop is inner loop: the result is number of permutations.
+
+In first one, the item which has been passed in outer loop do not have second chance to be considered to be added to snapsack. That mean {item0,item1} is the only case,
+{item1, item0} will not show.
+In second one, for every capacity, we loop items. For example in coin change problem:
+dp[5]=dp[4]+dp[3]+dp[0], dp[4] mean dp[5] select 1 as first coin change, dp[3] mean dp[5] select 2 as first coin change.
+But, in dp[4]=dp[3]+dp[2], dp[3]=dp[2]+dp[1], dp[4] can select 2 as first coin change, dp[3] can select 1 as first coin change. That mean {1,2} and {2,1} combination
+are calculated twice in the same dp[5] calculation. The repeat looping of item in different capacity make that happen. That is permutation.
 """
     def change(self, amount: int, coins: List[int]) -> int:
         
