@@ -49,6 +49,14 @@ values. But, in order not to false use present layer value, the j need to loop r
 i-th item, the previous layer is for i-1-th layer. Otherwise, we might use same item twice.
 And we can not mix the order of i loop and j loop. The item loop need to be outside, the weight limit loop should be the inner loop. This order make our choosing logic
 work: we make desicion of whether i-th item should be in backpack or not, this desicion can be different in different capacity j.
+Another needed to be aware is that j-weight[i] might not alway legal, because j can be small and weight[i] can be large. So, j need to loop from max length
+to weight[i]-1. The minus 1 is to allow j to loop up to the weight and to make j - weight[i] reach 0.
+
+How partition the array into two subsets be a 0/1 snapsack problem?
+We want to find whether there are certain combination of array element that sum of then are equal. That is equivalent to whether there are certain combination 
+of array element that equal half of the total sum of array. Of cousre, if sum of array can not divisible by 2, the ans is False.
+Choose some of the array element whose weight and value is the same array[i] and put them in a capacity sum(array)//2 snapsack to maximize the total value of 
+snapsack. If the snapsack can be exact full, return True. This is a 0/1 problem.
 """
     def canPartition(self, nums: List[int]) -> bool:
         
