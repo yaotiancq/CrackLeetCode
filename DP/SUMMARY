@@ -1,3 +1,18 @@
+                  |--> (snapsack) --> (max capacity v)
+                  |
+                  |
+                  |
+snapsack problem -|
+                  |                                                                 |--> (chosen) -------|
+                  |                                            |--> (only 1 item) --|                    |--> (0/1 Snapsack Problem)
+                  |               |--> (value w)               |                    |--> (not chosen) ---|
+                  |--> (item) --> |--> (volume v)              |                 |--> (not chosen) ------|
+                                  |--> (number of each item) --|--> (infinite) --|                       |--> (Complete Knapsack Problem/Unbounded Knapsack Problem)
+                                                               |                 |--> (choose several)---|
+                                                               |--> (different item has different number)---> (Multiple Knapsack Problem/Multi-dimensional Knapsack Problem)
+                                                               |--> (group packing, at most one item per group)--> (Grouped Knapsack Problem/Knapsack Problem with Group Constraints)
+
+
 0/1 snapsack problem
 
     416. Partition Equal Subset Sum 
