@@ -1,0 +1,15 @@
+0/1 snapsack problem
+
+    416. Partition Equal Subset Sum 
+        --- Given the capacity of snapsack, want to know weigher the candidates can exactly fill the snapsack. dp[-1]==target
+    1049. Last Stone Weight 2 
+        --- Given the capacity of snapsack, want to know the remain capacity of snapsack when trying to fill item in snapsack as more as possible.
+    494. Target Sum 
+        --- Given the capacity of snapsack, want to know the number of combinations of exact filling the snapsack. 
+        --- The sum of positive number can be calculated.
+        --- The deduction relationship is: dp[j]+=dp[j-nums[i]], each number in nums provide one possibility.
+        --- dp[0]=1, other initial value is 0, we need to deduct from 0, so it must be 1, not every numer in nums needed to be choosen, so its' initial value must be 0
+    474. Ones and Zeroes
+        --- Given the capacity of snapsack, want to know the maximum length of choosen item list, each item has mutilple attributes.
+        --- For mutiple dimension 0/1 snapsack problem, we need mutiple dimension DP array to equally deal with multiple attributes.
+        --- The deduction relationship is: dp[i][j]=max(dp[i][j], dp[i-item[0]][j-item[1]])+value[i]
