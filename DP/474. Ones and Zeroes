@@ -1,0 +1,47 @@
+# You are given an array of binary strings strs and two integers m and n.
+# Return the size of the largest subset of strs such that there are at most m 0's and n 1's in the subset.
+# A set x is a subset of a set y if all elements of x are also elements of y.
+
+# Example 1:
+# Input: strs = ["10","0001","111001","1","0"], m = 5, n = 3
+# Output: 4
+# Explanation: The largest subset with at most 5 0's and 3 1's is {"10", "0001", "1", "0"}, so the answer is 4.
+# Other valid but smaller subsets include {"0001", "1"} and {"10", "1", "0"}.
+# {"111001"} is an invalid subset because it contains 4 1's, greater than the maximum of 3.
+
+# Example 2:
+# Input: strs = ["10","0","1"], m = 1, n = 1
+# Output: 2
+# Explanation: The largest subset is {"0", "1"}, so the answer is 2.
+
+class Solution:
+
+"""
+Multiple dimension 0/1 snapsack problem.
+In 0/1 snapsack problem, we are try to maxmize the total item value we want to put in capacity j snapsack, the number of each item is 1, we decide whether
+to put the item in snapsack or not. 
+In multiple dimension 0/1 snapsack problem, the number of item is 1, but item have at least one more attributes beside item weight, and snapsack has 
+limitations for these attributes. For example, each item has value, weight, volume, snapsack have limitation on weight and also volume. We need consider both
+weight and volume for choosing item.
+
+How to solve multiple dimension 0/1 snapsack problem.
+We know that we can use 1-D DP array to solve typical 0/1 snapsack problem. We just use multiple dimension DP array to solve mutiple dimension 0/1 snapsack problem.
+In the above example, we define a 2-D DP array to deduct our results. One dimension is for weight, another dimension is for volume. 
+dp[i][j]=max(dp[i][j], dp[i-item[0]][j-item[1]]+item[2]) # item: [weight, volume, value]
+The framework for multiple dimension is the same as typical 0/1 snapsack problem.
+"""
+    def findMaxForm(self, strs: List[str], m: int, n: int) -> int:
+        
+        nums=[]
+        for s in strs:
+            temp=[s.count('0'),len(s)-s.count('0')]
+            nums.append(temp)
+
+        dp=[[0]*(n+1) for _ in range(m+1)]
+
+        for item in nums:
+            for i in range(m, item[0]-1, -1):
+                for j in range(n, item[1]-1, -1):
+                    dp[i][j]=max(dp[i][j], dp[i-item[0]][j-item[1]]+1)
+
+        return dp[-1][-1]
