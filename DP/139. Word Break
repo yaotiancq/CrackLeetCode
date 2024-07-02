@@ -30,6 +30,11 @@ For convenience, we can think that we need the proper permutation of words to fo
 of permutation. Permutation order generate all possible permutations. "appleapplepen" return True in combination order, because apple, pen are in word looping order. 
 "applepenapple" return False in combination order due to the word order is not the word looping order. "applepenapple" and "appleapplepen" all return True in permutation order. 
 This consideration should be experience.
+
+The design of dp array can be varied. dp[i] can be the length of sub-string of s can be formed by words in wordDict. 
+Or, dp[i] can be True if sub-string of s can be formed by words in wordDict.
+Or, more complecated, dp[i] can be the sub-string of s can be formed by words in wordDict.
+
 """
     def wordBreak(self, s: str, wordDict: List[str]) -> bool:
         
@@ -42,3 +47,17 @@ This consideration should be experience.
                         dp[j]=max(dp[j],dp[j-len(word)]+len(word))
             
         return dp[-1]==len(s)
+
+
+    def wordBreak(self, s: str, wordDict: List[str]) -> bool:
+        
+        dp=[0]*(len(s)+1)
+        dp[0]=1
+
+        for j in range(len(s)+1):
+            for word in wordDict:
+                if j>=len(word):
+                    if s[j-len(word):j]==word:
+                        dp[j]=max(dp[j],dp[j-len(word)])
+            
+        return dp[-1]==1
