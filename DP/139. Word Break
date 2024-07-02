@@ -1,0 +1,44 @@
+# Given a string s and a dictionary of strings wordDict, 
+# return true if s can be segmented into a space-separated sequence of one or more dictionary words.
+# Note that the same word in the dictionary may be reused multiple times in the segmentation.
+
+# Example 1:
+# Input: s = "leetcode", wordDict = ["leet","code"]
+# Output: true
+# Explanation: Return true because "leetcode" can be segmented as "leet code".
+
+# Example 2:
+# Input: s = "applepenapple", wordDict = ["apple","pen"]
+# Output: true
+# Explanation: Return true because "applepenapple" can be segmented as "apple pen apple".
+# Note that you are allowed to reuse a dictionary word.
+
+# Example 3:
+# Input: s = "catsandog", wordDict = ["cats","dog","sand","and","cat"]
+# Output: false
+
+class Solution:
+
+"""
+Unbounded snapsack problem: wordDict is candidates, s is the snapsack. We can select any word in wordDict multiple times. 
+
+In normal unbounded snapsack problem's combination number problem, the looping order decide whether the result is number of combination or permutation.
+In this specific problem, the permutation of words matters. For example, s = "applepenapple", wordDict = ["apple","pen"], apple will show twice. If we loop
+item first, the apple will not show second time. So, we need to loop the snapsack first.
+
+For convenience, we can think that we need the proper permutation of words to form s. The combination could only generate one order(follow the loop order) 
+of permutation. Permutation order generate all possible permutations. "appleapplepen" return True in combination order, because apple, pen are in word looping order. 
+"applepenapple" return False in combination order due to the word order is not the word looping order. "applepenapple" and "appleapplepen" all return True in permutation order. 
+This consideration should be experience.
+"""
+    def wordBreak(self, s: str, wordDict: List[str]) -> bool:
+        
+        dp=[0]*(len(s)+1)
+
+        for j in range(len(s)+1):
+            for word in wordDict:
+                if j>=len(word):
+                    if s[j-len(word):j]==word:
+                        dp[j]=max(dp[j],dp[j-len(word)]+len(word))
+            
+        return dp[-1]==len(s)
