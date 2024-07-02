@@ -18,7 +18,7 @@
 class Solution:
 
 """
-Unbounded snapsack problem
+Unbounded snapsack problem + length of combination
 dp[0]=0 because amount=0 make the possible changes is 0.
 Minimal is similar as maximal value problem, change the deduction relation to min()
 Initial value except 0-th will all be float('inf').
