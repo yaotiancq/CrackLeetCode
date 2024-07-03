@@ -28,3 +28,35 @@ snapsack problem -|
         --- Given the capacity of snapsack, want to know the maximum length of choosen item list, each item has mutilple attributes.
         --- For mutiple dimension 0/1 snapsack problem, we need mutiple dimension DP array to equally deal with multiple attributes.
         --- The deduction relationship is: dp[i][j]=max(dp[i][j], dp[i-item[0]][j-item[1]])+value[i]
+
+Unbounded snapsack problem
+
+    518. Coin Change 2
+        --- Given the capacity of snapsack, want to know the number of combinations of exact filling the snapsack.
+        --- Can use unlimited number of each of candidates. So, it is a unbounded snapsack problem.
+    377. Combination Sum 4
+        --- Given the capacity of snapsack, can use unlimited number of each of candidates.
+        --- Need to know the number of all permutations.
+        --- First capacity loop, then item loop, will generate permutations.
+    70. Climbing Stairs
+        --- Given the capacity of snapsack, that is the n stairs. Candidates=[1,2], that is 1 or 2 steps at a time. Unlimited number of each of candidates.
+        --- First 1 then 2 and first 2 then 1 are different ways to reach top. So, we need to know the number of permutations.
+    322. Coin Change
+        --- Given the capacity of snapsack, Unlimited number of each of candidates.
+        --- Minimal count of answer. So, that is the length of chosen candidates. dp[j]=min(dp[j],dp[j-candidate[i]]+1)
+    279. Perfect Squares
+        --- Given the capacity of snapsack, unliminted number of each candidates.
+        --- Minnimal count of answer. dp[j] = min(dp[j - i * i] + 1, dp[j])
+    139. Word Break
+        --- Given the capacity of snapsack, unliminted number of each candidates.
+        --- String assembly is not like sum of numbers. It can not ignore the order of word. So, it is permutation, combinations might not work in most of cases.
+            That means we need capacity loop first. It also can not allow assembly when the word is not we want, so, we need check whether the word is our target
+            word in string.
+
+Multiple Knapsack Problem
+    The only difference between Multiple Knapsack Problem and 0/1 Knapsack Problem is that the Multiple Knapsack Problem has more than one in number of same candidate.
+We just span the candidates. Making the candidate which is more than one a 0/1 candidates but showing multiple times in candidates. So, our problem is turning to 0/1
+snapsack problem.
+
+
+
