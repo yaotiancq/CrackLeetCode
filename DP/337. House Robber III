@@ -1,0 +1,51 @@
+# The thief has found himself a new place for his thievery again. There is only one entrance to this area, called root.
+# Besides the root, each house has one and only one parent house. After a tour, the smart thief realized that all houses in this place form a binary tree. 
+# It will automatically contact the police if two directly-linked houses were broken into on the same night.
+# Given the root of the binary tree, return the maximum amount of money the thief can rob without alerting the police.
+
+# Example 1:
+# Input: root = [3,2,3,null,3,null,1]
+# Output: 7
+# Explanation: Maximum amount of money the thief can rob = 3 + 3 + 1 = 7.
+
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+
+"""
+This is a Tree DP. 
+It can be used to solve various optimization problems related to tree structure. Such as:
+    --- Tree Diameter: Calculating the longest path between any two nodes in the tree.
+    --- Minimum Vertex Cover: Finding the smallest set of nodes such that every edge in the tree has at least one endpoint in the set.
+    --- Subtree Problems: Calculating attributes of each subtree, such as the size of the subtree or the sum of weights in the subtree.
+    --- Minimum Spanning Tree on a Tree: Finding the minimum weight spanning tree within the tree.
+    --- Tree Coloring Problem: Coloring the nodes of the tree such that adjacent nodes have different colors while minimizing the number of colors used.
+    --- Path Queries: Finding specific paths in the tree, such as the path from the root to a leaf node or between any two nodes.
+    --- Path Sum in a Tree: Calculating the sum of weights along paths from the root to each leaf node.
+    --- Lowest Common Ancestor (LCA): Finding the lowest common ancestor of two nodes in the tree.
+
+Just as typical DP problem, every tree node we traverse has options to choose. Different decision made in each node has different impact on latter traversal node.
+We use a array return by DFS process to work as DP array to record status of each node in traversal process. Then, later nodes will use these status.
+The return of tree DP is the status of root. We should know that whether we can use this status to generate answer. Or, it will not be a success tree DP.
+"""
+    def rob(self, root: Optional[TreeNode]) -> int:
+        
+        def dfs(root,k0,k1):
+
+            if not root:
+                return k0,k1
+ 
+            l0,l1=dfs(root.left,k0,k1)
+            r0,r1=dfs(root.right,k0,k1)
+
+            t0=max(l0,l1)+max(r0,r1)
+            t1=l0+r0+root.val
+
+            return t0,t1
+
+        t0,t1=dfs(root,0,0)
+        return max(t0,t1)
