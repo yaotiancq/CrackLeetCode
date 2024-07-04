@@ -34,7 +34,7 @@ We can proof that.
 In our consideration of first house, if we rob the first house, we can not rob the last one, so dp[n]=dp[n-1]. It is equal to our consideration of ignore last house.
 If we do not rob the first house, we can rob the last house, so dp[n]=robrange(nums[1:]).
 The DP choice can be described as whether we rob first house or not. We choose differently, the dp detail is different. This kind of choice outside dp process, which
-decide dp detail is interesting.
+decide dp detail is interesting. DP process work as a inner process.
 
 """
     def rob(self, nums: List[int]) -> int:
