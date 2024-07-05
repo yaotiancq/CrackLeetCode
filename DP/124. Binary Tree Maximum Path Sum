@@ -1,0 +1,69 @@
+# A path in a binary tree is a sequence of nodes where each pair of adjacent nodes in the sequence has an edge connecting them. 
+# A node can only appear in the sequence at most once. Note that the path does not need to pass through the root.
+# The path sum of a path is the sum of the node's values in the path.
+# Given the root of a binary tree, return the maximum path sum of any non-empty path.
+
+# Example 1:
+# Input: root = [1,2,3]
+# Output: 6
+# Explanation: The optimal path is 2 -> 1 -> 3 with a path sum of 2 + 1 + 3 = 6.
+
+# Example 2:
+Input: root = [-10,9,20,null,null,15,7]
+Output: 42
+Explanation: The optimal path is 15 -> 20 -> 7 with a path sum of 15 + 20 + 7 = 42.
+
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+
+"""
+Previous decision of nodes in the tree has influence in whole solution, but every step's decision can be made by limited previous information, not the whole 
+picture of solution. This is a sign of DP solution.
+For normal solution format, the choice of presence of each node make up our DP choice. 
+If current node in our optimal route, what we should consider? If not, what we should consider?
+
+                    (-10)
+                    /   \
+                   /     \
+                 (9)     (20)      15->20->7
+                         /  \
+                        /    \
+                      (15)   (7)
+
+If current node not in our "optimal route", the upward route is cut off. We have three situations:
+        max(max(left), max(right), root.val+left[1]+right[1])
+    --- its left child's optimal value, the left child is connected or not
+    --- right child's optimal value, the right child is connected or not
+    --- root.val+left[1]+right[1], the left child and right child is connected
+    
+When the upward route is exist. In this situation, we have 3 different options.
+        max(root.val, root.val+left[1], root.val+right[1])
+    --- Only the root(left and right child of root is negative, so we don't need any left or right child)
+    --- root and left child(the sum of root.val and left is larger than root.val and the sum of root.val and right, left child is connected)
+    --- root and right child(the sum of root.val and right is larger than root.val and the sum of root.val and left, right child is connected).
+
+res0, res1 = DFS(root)
+res0 is the situation that root not been connected to upper layer node.
+res1 is the situation that root been connected to upper layer node.
+"""
+    def maxPathSum(self, root: Optional[TreeNode]) -> int:
+        
+        def dfs(root):
+            
+            if not root:
+                return float('-inf'),float('-inf')
+            
+            left=dfs(root.left)
+            right=dfs(root.right)
+            
+            res0=max(max(left), max(right), root.val+left[1]+right[1])
+            res1=max(root.val, root.val+left[1], root.val+right[1])
+            
+            return res0, res1
+
+        return max(dfs(root))
