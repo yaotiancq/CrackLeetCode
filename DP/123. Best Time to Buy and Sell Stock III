@@ -20,6 +20,8 @@ Typical hard DP problem. It need 5 status to correctyly describe the whole statu
 
 How to describe status transfer process? May be we can first establish a table and try to simulate the answer solving process. 
 After all, how to deduct answer from beginning is DP.
+
+Limit times means when to buy or sell is a dp process needed to consider, it should be represented in dp process. It means the expansion of the scale of dp table.
 """
     def maxProfit(self, prices: List[int]) -> int:
         
