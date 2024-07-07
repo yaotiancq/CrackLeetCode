@@ -16,6 +16,39 @@
 class Solution:
 
 """
+For the design of DP array, we must answer a question. What information we want to record? Or, try to understand that what we need for current round of decision 
+making.
+In this problem, we want to know the max profit we can get through one buy and sell. From [7,1,5,3,6,4], we know that greedy method is to find the lowest price then
+find the largest price on its right side. And we might need to check it mulitple times, that is through a loop to update the mimimal value and the largest difference
+we can get. So, we need keep record of two information. One is the minimal value we can get as the traversal goes on. Anther is the maximum difference of current 
+value with previous maximum difference. We can say that this is greedy method, or it can be treated as DP.
+This analysis work for easy transfered logic. But, it may not be easy to conclude when the transfered logic is not easy.
+In this problem, every candidate day, we have two status: hold stock, do not hold stock. This is key status. Combine with our need for maximum profit, we want our
+maximum can be deduct from the calculation process of DP array. We can design our stock holding status dp[i][0] as the maxmum profit we have when holding stock, 
+dp[i][1] as the maximum profit we have when not holding stock.
+We can see how the status transfering.
+When we hold stock at i-th day, we have two situation, we might hold stock at i-1 th day, so, dp[i][0] = dp[i-1][0]. We also might buy stock at i-th day, so, 
+dp[i][0]=0-prices[i] (we have 0 profit when we do not buy stock, if we don't sell stock, we have negative profit, that is reasonable).
+We want to maximize our profit when we hold stock, that is minimizing our cost of buying stock. It is equal to find the lowest prices on the left side. 
+That is optimize the day we buy stock. dp[i][0]=max(dp[i-1][0], -prices[i])
+When we do not hold stock at i-th day, we also have two situdations, we might not be holding stock since i-1 th day, so, dp[i][1]=dp[i-1][1]. We also might selling 
+stock at i-th day. So, dp[i][1]=prices[i]+dp[i-1][1]. We want to maximize our profit when we do not hold stock. dp[i][1]=max(dp[i-1][1], dp[i-1][0]+prices[i])
+This is a complete status transfer describe of two status in this problem. It may be not easy to understand than greedy one, but this could help with much complicated
+status transfer problem.
+"""
+    def maxProfit(self, prices: List[int]) -> int:
+        
+        dp=[[0]*2 for _ in range(len(prices))]
+        dp[0][0]=-prices[0]
+        dp[0][1]=0
+
+        for i in range(1,len(prices)):
+            dp[i][0]=max(dp[i-1][0], -prices[i])
+            dp[i][1]=max(dp[i-1][1], dp[i-1][0]+prices[i])
+
+        return dp[-1][1]
+
+"""
 The i-th day's profit is related with i-1 th day's profit. If i-th day price is higher than i-1 day, then we need to wait for i-th day to sale stock.
 If i-th day price is lower than i-1 day, we sale stock at i-th will make profit loss. That exist decision, DP can be used.
 Let dp[i] be the maximum profit we can get when saling stock at i-th day. We can not define it as the maximum profit when saling stock at or before i-th day.
@@ -35,3 +68,22 @@ And, we can use another varible to record the current largest value to release t
             dp[i]=max(prices[i]-prices[i-1]+dp[i-1],0)
        
         return max(dp)
+
+"""
+Greedy method
+The best time is finding the lowest price on the left and finding the highest price on the right. 
+We keep a record of the lowest price when we loop over prices, then keep a record the largest profit with current price and current lowest price.
+The current price will be always on the right side of current lowest price.
+"""
+    def maxProfit(self, prices: List[int]) -> int:
+        
+        minPrice=float('inf')
+        ans=0
+
+        for i in range(len(prices)):
+            minPrice=min(minPrice, prices[i])
+            ans=max(ans, prices[i]-minPrice)
+    
+        return ans
+
+
