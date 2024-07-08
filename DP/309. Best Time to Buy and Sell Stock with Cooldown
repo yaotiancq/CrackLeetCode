@@ -31,6 +31,10 @@ don't hold and don't sell stock today, sell and don't hold stock today, cool dow
 What ever we do, if we don't hold stock at first day, we have 0 profit. This is reasonable setting.
 
 How to describe status and status transfer is the key to solve DP problem.
+
+Remember that the ans is the largest one of Three don't hold stock status. The largest profit might happen at the sell day which is also the last day, or 
+cool day which is also the last day, or we can not buy any stock at any day because its price is monotonous decreasing. We must include the cool day, sell day,
+and don't hold and don't sell stock today which contain don't hold and don't sell stock yestoday.
 """
     def maxProfit(self, prices: List[int]) -> int:
         
