@@ -1,3 +1,6 @@
+###############################################################################################################################################
+######################### Snapsack prpblem ####################################################################################################
+###############################################################################################################################################
                   |--> (snapsack) --> (max capacity v)
                   |
                   |
@@ -58,5 +61,34 @@ Multiple Knapsack Problem
 We just span the candidates. Making the candidate which is more than one a 0/1 candidates but showing multiple times in candidates. So, our problem is turning to 0/1
 snapsack problem.
 
+###################################################################################################################################################
+##################### Best time to buy and sell stock proplem #####################################################################################
+###################################################################################################################################################
+Best time to buy and sell stock proplem
+    121. Best time to buy and sell stock
+        --- buy and sell stock only once.
+        --- 2 status: hold stock, don't hold stock dp[i][0], dp[i][1]
+        --- When buy stock, the previous day's profit when don't hold stock must be 0
+    122. Best time to buy and sell stock II
+        --- buy and sell stock unlimited times.
+        --- 2 status: hold stock, don't hold stock
+        --- When buy stock ,the previous day's profit must be remained
+    123. Best time to buy and sell stock III
+        --- buy and sell stock at most 2 times.
+        --- 5 status: no operations, fisrt hold stock, first don't hold stock, second hold stock, second don't hold stock
+        --- When buy stock ,the previous day's profit must be remained
+    188. Best time to buy and sell stock IV
+        --- buy and sell stock at most k times.
+        --- 2k+1 status: no operations, fisrt hold stock, first don't hold stock,..., k-th hold stock, k-th don't hold stock
+        --- When buy stock ,the previous day's profit must be remained
+    309. Best time to buy and sell stock with cool down
+        --- buy and sell stock unlimited times, but need to cool down one day after every stock selling.
+        --- 4 status: hold stock, don't hold stock(sell stock day, cool down day, ready to buy but not in cool down day)
+        --- This clasification help cool down day refer to a one day before status, help clearly classified status.
+        --- When buy stock ,the previous day's profit must be remained
+    714. Best time to buy and sell stock with transaction fee
+        --- buy and sell stock unlimited times
+        --- 2 status: hold stock, don't hold stock
+        --- Every sell have to pay fee
 
 
