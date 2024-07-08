@@ -1,0 +1,47 @@
+# You are given an array prices where prices[i] is the price of a given stock on the ith day.
+# Find the maximum profit you can achieve. You may complete as many transactions as you like 
+# (i.e., buy one and sell one share of the stock multiple times) with the following restrictions:
+# After you sell your stock, you cannot buy stock on the next day (i.e., cooldown one day).
+# Note: You may not engage in multiple transactions simultaneously (i.e., you must sell the stock before you buy again).
+
+# Example 1:
+# Input: prices = [1,2,3,0,2]
+# Output: 3
+# Explanation: transactions = [buy, sell, cooldown, buy, sell]
+
+# Example 2:
+# Input: prices = [1]
+# Output: 0
+
+class Solution:
+
+"""
+We have one more status: cool down day. As usual thinking, we have status: hold stock, don't hold stock, cool down day. But, when we don't hold stock, it might
+be cool down day. So, this classification might be vague. 
+We design status as: hold stock today, don't hold and don't sell stock today, sell and don't hold stock today, cool down today
+We split don't hold stock status into two status, don't hold and sell stock today and sell and don't hold stock today. 
+Because the day before cool down day must be sell stock yestoday status. Can not be normal don't hold stock status.
+    --- hold stock today: max(hold stock yestoday, buy stock today=cool down yestoday and buy today,  don't hold and don't sell stock yestoday)
+    --- don't hold and don't sell stock today: max(don't hold and don't sell stock yestoday, cool down yestoday)
+    --- sell and don't hold stock today: hold stock yestoday + stock price today
+    --- cool down today: sell and don't hold stock yestoday
+Initial value:
+hold stock at 0-th day: -prices[0]
+don't hold and don't sell stock today, sell and don't hold stock today, cool down today: 0
+What ever we do, if we don't hold stock at first day, we have 0 profit. This is reasonable setting.
+
+How to describe status and status transfer is the key to solve DP problem.
+"""
+    def maxProfit(self, prices: List[int]) -> int:
+        
+        dp=[[0]*4 for _ in range(len(prices))]
+        dp[0][0]=0
+        dp[0][1]=-prices[0]
+        
+        for i in range(1,len(prices)):
+            dp[i][0]=max(dp[i-1][0], dp[i-1][3])
+            dp[i][1]=max(dp[i-1][1], dp[i-1][3]-prices[i], dp[i-1][0]-prices[i])
+            dp[i][2]=dp[i-1][1]+prices[i]
+            dp[i][3]=dp[i-1][2]
+
+        return max(dp[-1][0],dp[-1][2],dp[-1][3])
