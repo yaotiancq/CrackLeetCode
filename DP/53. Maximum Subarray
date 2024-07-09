@@ -1,0 +1,25 @@
+# Given an integer array nums, find the subarray with the largest sum, and return its sum.
+
+# Example 1:
+# Input: nums = [-2,1,-3,4,-1,2,1,-5,4]
+# Output: 6
+# Explanation: The subarray [4,-1,2,1] has the largest sum 6.
+
+class Solution:
+
+"""
+dp[i] denote the max subarray ended with i-th number. Because we need to decide whether we should add new element to previous subarray. 
+If we don't, the new element may be added to previous subarray, may be not.
+In most of case , if subarray is continous, we use this definition. This difinition make sure all checked subarray is continous.
+If not , we use 0~ith subarray definition.
+"""
+    def maxSubArray(self, nums: List[int]) -> int:
+        
+        dp=[0]*len(nums)
+
+        dp[0]=nums[0]
+
+        for i in range(1, len(nums)):
+            dp[i]=max(nums[i],nums[i]+dp[i-1])
+
+        return max(dp)
