@@ -1,0 +1,41 @@
+# Given two integer arrays nums1 and nums2, return the maximum length of a subarray that appears in both arrays.
+
+# Example 1:
+# Input: nums1 = [1,2,3,2,1], nums2 = [3,2,1,4,7]
+# Output: 3
+# Explanation: The repeated subarray with maximum length is [3,2,1].
+
+# Example 2:
+# Input: nums1 = [0,0,0,0,0], nums2 = [0,0,0,0,0]
+# Output: 5
+# Explanation: The repeated subarray with maximum length is [0,0,0,0,0].
+
+class Solution:
+
+"""
+Use dp array to fully describe the problem. Compressing information representation is not a good idea in dp array design. We need to use dp[i] or
+dp[i][j] to include aspects of the problem. In this problem, our target is related to two different index in two array. We'd better to describe 
+this information in dp array.
+"""
+    def findLength(self, nums1: List[int], nums2: List[int]) -> int:
+        
+        dp=[[0]*len(nums2) for _ in range(len(nums1))]
+
+        for j in range(len(nums2)):
+            if nums2[j]==nums1[0]:
+                dp[0][j]=1
+
+        for i in range(len(nums1)):
+            if nums1[i]==nums2[0]:
+                dp[i][0]=1
+
+        for i in range(1,len(nums1)):
+            for j in range(1, len(nums2)):
+                if nums1[i]==nums2[j]:
+                    dp[i][j]=dp[i-1][j-1]+1
+
+        ans=0
+        for item in dp:
+            ans=max(ans,max(item))
+
+        return ans
