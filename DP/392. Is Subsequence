@@ -1,0 +1,63 @@
+# Given two strings s and t, return true if s is a subsequence of t, or false otherwise.
+# A subsequence of a string is a new string that is formed from the original string by deleting some (can be none) of the characters without disturbing the relative positions of the remaining characters. (i.e., "ace" is a subsequence of "abcde" while "aec" is not).
+
+# Example 1:
+# Input: s = "abc", t = "ahbgdc"
+# Output: true
+
+class Solution:
+
+"""
+dp[i][j]=dp[i][j-1], because dp[i-1][j] is definitely smaller than or equal to dp[i][j-1]. This problem consider all char in s.
+"""
+    def isSubsequence(self, s: str, t: str) -> bool:
+
+        if len(s)==0:
+            return True
+
+        if len(t)==0:
+            return False
+        
+        dp=[[0]*len(t) for _ in range(len(s))]
+
+        if s[0]==t[0]:
+            dp[0][0]=1
+
+        for j in range(1, len(t)):
+            dp[0][j]=dp[0][j-1]
+            if t[j]==s[0]:
+                dp[0][j]=1
+            
+        for i in range(1, len(s)):
+            dp[i][0]=dp[i-1][0]
+            if t[0]==s[i]:
+                dp[i][0]=1
+        
+        for i in range(1,len(s)):
+            for j in range(1,len(t)):
+                if s[i]==t[j]:
+                    dp[i][j]=dp[i-1][j-1]+1
+                else:
+                    dp[i][j]=dp[i][j-1]
+
+        return len(s)==dp[-1][-1]
+
+
+"""
+Faster, two pointer.
+Loop over all s, keep record of index+1 when find match in t in order not to search t at the beginning of t.
+"""
+    def isSubsequence(self, s: str, t: str) -> bool:
+        
+        start=0
+        cnt=0
+        for i in range(len(s)):
+            j=start
+            while j<len(t):
+                if s[i]==t[j]:
+                    cnt+=1
+                    start=j+1
+                    break
+                j+=1
+        
+        return cnt==len(s)
