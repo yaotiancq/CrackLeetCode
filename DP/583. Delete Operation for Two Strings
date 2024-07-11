@@ -61,3 +61,37 @@ We want the minimal steps, so we choose the minimal number from these 3 differen
                     dp[i][j]=min(dp[i-1][j-1]+2,dp[i-1][j]+1,dp[i][j-1]+1)
 
         return dp[-1][-1]
+
+class Solution:
+
+"""
+We could calculate the length of the longest common subsequence of word1 and word2, then the remain char in word1 and word2 is what we need to delete
+The longest common subsequence problem:
+if word1[j]==word2[i], dp[i][j]=dp[i-1][j-1]+1, the lenght of common subsequence should add 1.
+if not, dp[i][j] can be either dp[i-1][j] or dp[i][j-1], we choose the larger one.
+"""
+    def minDistance(self, word1: str, word2: str) -> int:
+        
+        dp=[[0]*len(word1) for _ in range(len(word2))]
+
+        if word1[0]==word2[0]:
+            dp[0][0]=1
+
+        for j in range(1,len(word1)):
+            dp[0][j]=dp[0][j-1]
+            if word1[j]==word2[0]:
+                dp[0][j]=1
+
+        for i in range(1,len(word2)):
+            dp[i][0]=dp[i-1][0]
+            if word1[0]==word2[i]:
+                dp[i][0]=1
+        
+        for i in range(1,len(word2)):
+            for j in range(1,len(word1)):
+                if word2[i]==word1[j]:
+                    dp[i][j]=dp[i-1][j-1]+1
+                else:
+                    dp[i][j]=max(dp[i-1][j],dp[i][j-1])
+
+        return len(word1)+len(word2)-2*dp[-1][-1]
