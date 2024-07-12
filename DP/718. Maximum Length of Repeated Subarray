@@ -13,6 +13,34 @@
 class Solution:
 
 """
+dp[i][j] denotes that the maximum lenght of subarray in both subarray in nums1 ended with i-1 index and subarray in nums2 ended with j-1 index.
+Because it is subarray, not subsequence, we must use dp[i][j]=dp[i-1][j-1]+1.
+If subarray, we denote dp[i][j] subarrays ended at i-1 and j-1 index, ans=max(ans,dp[i][j]) is what we need:
+    if nums1[i-1]==nums2[j-1]:
+        dp[i][j]=dp[i-1][j-1]+1
+If subsequence, we denote dp[i][j] subsequence in 0~i-1 and 0~j-1 index, dp[-1][-1] is what we need:
+    if nums1[i-1]==nums2[j-1]:
+        dp[i][j]=dp[i-1][j-1]+1
+    else:
+        dp[i][j]=max(dp[i-1][j],dp[i][j-1])
+Initiation:
+We can explain it as that, empty list and empty list have 0 length of same subarray in both list.
+And 0 make dp[i][j]=dp[i-1][j-1]+1 work from dp[0][j] and dp[0][j].
+"""
+    def findLength(self, nums1: List[int], nums2: List[int]) -> int:
+        
+        dp=[[0]*(len(nums2)+1) for _ in range(len(nums1)+1)]
+
+        ans=0
+        for i in range(1,len(nums1)+1):
+            for j in range(1, len(nums2)+1):
+                if nums1[i-1]==nums2[j-1]:
+                    dp[i][j]=dp[i-1][j-1]+1
+                ans=max(ans, dp[i][j])
+
+        return ans
+
+"""
 Use dp array to fully describe the problem. Compressing information representation is not a good idea in dp array design. We need to use dp[i] or
 dp[i][j] to include aspects of the problem. In this problem, our target is related to two different index in two array. We'd better to describe 
 this information in dp array.
