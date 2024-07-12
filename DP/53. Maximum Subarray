@@ -12,6 +12,9 @@ dp[i] denote the max subarray ended with i-th number. Because we need to decide 
 If we don't, the new element may be added to previous subarray, may be not.
 In most of case , if subarray is continous, we use this definition. This difinition make sure all checked subarray is continous.
 If not , we use 0~ith subarray definition.
+
+It wants the max value, not the lengh. It can not start from empty list. Because empty list's value is 0, it larger than negative values.
+Experience: value goes negative do not use 0 as initiation. Length is safe. So, here we use nums[0] as initiation.
 """
     def maxSubArray(self, nums: List[int]) -> int:
         
