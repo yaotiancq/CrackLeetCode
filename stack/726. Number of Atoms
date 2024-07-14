@@ -1,0 +1,182 @@
+# Given a string formula representing a chemical formula, return the count of each atom.
+# The atomic element always starts with an uppercase character, then zero or more lowercase letters, representing the name.
+# One or more digits representing that element's count may follow if the count is greater than 1. If the count is 1, no digits will follow.
+# For example, "H2O" and "H2O2" are possible, but "H1O2" is impossible.
+# Two formulas are concatenated together to produce another formula.
+# For example, "H2O2He3Mg4" is also a formula.
+# A formula placed in parentheses, and a count (optionally added) is also a formula.
+# For example, "(H2O2)" and "(H2O2)3" are formulas.
+# Return the count of all elements as a string in the following form: the first name (in sorted order), 
+# followed by its count (if that count is more than 1), followed by the second name (in sorted order), followed by its count (if that count is more than 1), and so on.
+# The test cases are generated so that all the values in the output fit in a 32-bit integer.
+
+# Example 1:
+# Input: formula = "H2O"
+# Output: "H2O"
+# Explanation: The count of elements are {'H': 2, 'O': 1}.
+
+# Example 2:
+# Input: formula = "Mg(OH)2"
+# Output: "H2MgO2"
+# Explanation: The count of elements are {'H': 2, 'Mg': 1, 'O': 2}.
+
+# Example 3:
+# Input: formula = "K4(ON(SO3)2)2"
+# Output: "K4N2O14S4"
+# Explanation: The count of elements are {'K': 4, 'N': 2, 'O': 14, 'S': 4}.
+
+class Solution:
+
+"""
+We use stack so solve such kind of recursive problem. It a good practice for complicated programming.
+
+To use stack so solve formula = "K4(ON(SO3)2)2", we need to know exact action for each different kind of char.
+
+Basic algorithm idea is when we meet ")", we pop stack and record each pop out element for later calculation.
+
+Basic structure is Mg21 and ()21, Mg is atom, 21 is the number of atom. () is () structure, 21 is its number.
+
+The most important thing for such kind of algorithm is to decide the start and end of each kind of element.
+We need to decide the start and end of each structure(e.g. Mg, ()), and the start and end of the number.
+
+    when c.isupper()==True:
+        --- It is the start of current atom: Mg M is the start of Mg
+        --- It is the end of previous atom and its number, so we need to store previous atom and its number before we star dealing with current atom:
+            MgS S is the end of Mg and its number 1, we need to store Mg and it number 1 first.
+            Mg21S S is the end of number 21, there might be no atom number, we can set atom number to a default value 1
+        --- It is the end of current () and its number: We begin to deal with () structure. We pop out stack and update the number of each atom
+            until we meet "(", then, add back to stack. 
+            (Mg2)2Mg
+        --- When current atom is "", it is current () structure and its number, when it is not "", it atom and its number
+    When c.islower()==True:
+        --- Just update current atom: Mg g is added to current atom M to update current atom.
+    When c.isdigit()==True:
+        --- It is first digit or not first digit for number:
+            If default num=0, we can let num=10*num+int(c) to simplily update our number, but num is default to 1. So, we can not use this formula to update
+            num when it is the first digit of number. When it is the first digit, num=int(c), and when it is not the first digit, num=10*num+int(c)
+        --- It is the end of current atom: Mg21
+            But we don't need to do any more thing to store current atom, because we maintain current atom and its number at the same time.
+    When c=="(":
+        --- It is the start of inner structure, we need to store it in stack.
+        --- It is end of current atom and its number.
+        --- It is the end of current () structure and its number: We begin to deal with () structure. We pop out stack and update the number of each atom
+            until we meet "(", then, add back to stack. 
+        --- When current atom is "", it is current () structure and its number, when it is not "", it atom and its number
+    When c==")":
+        --- It is end of current atom and its number.
+        --- It is start of stack.pop() operation, but we can not immediately pop, we need to read the following number. At this moment, we need a flag to indicate
+            that there is () structure need to deal with
+        --- It is the end of current () structure and its number: We begin to deal with () structure. We pop out stack and update the number of each atom
+            until we meet "(", then, add back to stack. 
+        --- When current atom is "", it is current () structure and its number, when it is not "", it atom and its number
+    When c=="#":
+        --- It the end of string
+        --- It the end of current atom and its number.
+        --- It the end of current () structure and its number: We begin to deal with () structure. We pop out stack and update the number of each atom
+            until we meet "(", then, add back to stack. 
+        --- When current atom is "", it is current () structure and its number, when it is not "", it atom and its number
+    
+"""
+    def countOfAtoms(self, formula: str) -> str:
+        
+        stack=[]
+
+        ch=""
+        num=1
+        formula+="#"
+        flag=False
+        isFirstDigit=True
+
+        for i in range(len(formula)):
+            if formula[i].isupper():
+                if ch!="":
+                    stack.append([ch,num])
+                    ch=""
+                    num=1
+                else:
+                    if flag:
+                        pch, pnum = stack.pop()
+                        temp=[]
+                        while pch!="(":
+                            temp.append([pch, pnum*num])
+                            pch, pnum = stack.pop()
+                        stack+=temp[::-1]
+                        num=1
+                        flag=False
+                ch+=formula[i]
+                isFirstDigit=True
+            elif formula[i].islower():
+                ch+=formula[i]
+            elif formula[i].isdigit():
+                if isFirstDigit:
+                    num=int(formula[i])
+                    isFirstDigit=False
+                else:
+                    num=10*num+int(formula[i])
+            elif formula[i]=="(":
+                if ch!="":
+                    stack.append([ch,num])
+                    ch=""
+                    num=1
+                else:
+                    if flag:
+                        pch, pnum = stack.pop()
+                        temp=[]
+                        while pch!="(":
+                            temp.append([pch, pnum*num])
+                            pch, pnum = stack.pop()
+                        stack+=temp[::-1]
+                        num=1
+                        flag=False
+                stack.append([formula[i],0])
+            elif formula[i]==")":
+                if ch!="":
+                    stack.append([ch,num])
+                    ch=""
+                    num=1
+                else:
+                    if flag:
+                        pch, pnum = stack.pop()
+                        temp=[]
+                        while pch!="(":
+                            temp.append([pch, pnum*num])
+                            pch, pnum = stack.pop()
+                        stack+=temp[::-1]
+                        num=1
+                        flag=False
+                flag=True
+                isFirstDigit=True
+            elif formula[i]=="#":
+                if ch!="":
+                    stack.append([ch,num])
+                    ch=""
+                    num=1
+                else:
+                    if flag:
+                        pch, pnum = stack.pop()
+                        temp=[]
+                        while pch!="(":
+                            temp.append([pch, pnum*num])
+                            pch, pnum = stack.pop()
+                        stack+=temp[::-1]
+                        num=1
+                        flag=False
+
+        stack.sort()
+        ans=""
+        pres=""
+        prenum=0
+        for item in stack:
+            if item[0]!=pres:
+                ans+=item[0]
+                if item[1]!=1:
+                    ans+=str(item[1])
+                pres=item[0]
+                prenum=item[1]
+            else:
+                if prenum!=1:
+                    ans=ans[:len(ans)-len(str(prenum))]
+                prenum+=item[1]
+                ans+=str(prenum)
+
+        return ans
