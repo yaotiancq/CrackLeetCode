@@ -1,0 +1,110 @@
+# You are given the root of a binary tree with n nodes. Each node is uniquely assigned a value from 1 to n. 
+# You are also given an integer startValue representing the value of the start node s, 
+# and a different integer destValue representing the value of the destination node t.
+
+# Find the shortest path starting from node s and ending at node t. 
+# Generate step-by-step directions of such path as a string consisting of only the uppercase letters 'L', 'R', and 'U'. 
+# Each letter indicates a specific direction:
+
+# 'L' means to go from a node to its left child node.
+# 'R' means to go from a node to its right child node.
+# 'U' means to go from a node to its parent node.
+# Return the step-by-step directions of the shortest path from node s to node t.
+
+# Example 1:
+# Input: root = [5,1,2,3,null,6,4], startValue = 3, destValue = 6
+# Output: "UURL"
+# Explanation: The shortest path is: 3 → 1 → 5 → 2 → 6.
+
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+
+
+"""
+In order to find the shortest path from start node to end node, we need to know the LCA(lowest common ancestor) of these two node. We also need to know the path 
+from root to start node and also the end node.
+The design of LCA and path from root is key component.
+LCA:
+    We try to find start or end in left subtree and right subtree. If we have not none result in left subtree, that is to say we find start or end at left subtree.
+The same with right subtree. 
+    So, the logic is:
+    If we find start or end both in left subtree and right subtree, that means that start and end distribute at both side of root. So, the LCA is root.
+    If left subtree return not None, but right subtree return None, that means that both start and end are in left subtree. The first return of left subtree
+        is the LCA.
+    So with the case that left subtree return None and right subtree return not None.
+    Past all these three cases, we should return None. Start and end are not in this tree.
+
+Path from root:
+    We use dfs to search the tree, and keep record of the path it pass. We start from root, and dfs in leaf, if we find target, return True. If we can not find
+in node's left subtree and right subtree, also node is not our target, we can safely pop out this node. This is backtracking.
+
+Remove the common prefis of path from root to start and path from root to LCA, and common prefis of path from root to end and path from root to LCA, we can get
+the shortest path from start to end.
+"""
+    def getDirections(self, root: Optional[TreeNode], startValue: int, destValue: int) -> str:
+
+        def LCA(root, startValue, destValue):
+
+            if not root:
+                return None
+
+            if startValue==root.val or destValue==root.val:
+                return root
+
+            leftLCA=LCA(root.left, startValue, destValue)
+            rightLCA=LCA(root.right, startValue, destValue)
+
+            if leftLCA and rightLCA:
+                return root
+
+            if leftLCA:
+                return leftLCA
+
+            if rightLCA:
+                return rightLCA
+
+            return None
+
+        def dfs(root, des, res, dire):
+
+            if not root:
+                return False
+
+            if dire!="":
+                res.append(dire)
+
+            if root.val==des:
+                return True
+
+            if dfs(root.left, des, res, "L") or dfs(root.right, des, res, "R"):
+                return True
+
+            res.pop()
+
+            return False
+
+        startPath=[]
+        destPath=[]
+        lcaPath=[]
+        ans=""
+        
+        LCAnode=LCA(root, startValue, destValue)
+
+        dfs(root, startValue, startPath, "")
+        dfs(root, destValue, destPath, "")
+        dfs(root, LCAnode.val, lcaPath, "")
+
+        startPath=startPath[len(lcaPath):]
+        destPath=destPath[len(lcaPath):]
+
+        for i in range(len(startPath)):
+            startPath[i]='U'
+
+        ans=startPath+destPath
+
+        return ''.join(ans)
