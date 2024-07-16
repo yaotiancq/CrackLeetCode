@@ -31,6 +31,38 @@ class Solution:
 """
 DP
 """
+class Solution:
+
+"""
+The dp idea: if s[i+1:j] is a palindromic string, then s[i:j+1] must be a palindromic string if s[i]==s[j].
+If s[i:j+1] is a palindromic string, then dp[i][j]==True
+If s[i+1:j] is a palindromic string, then dp[i+1][j-1]==True
+So, dp[i][j] denotes that the s[i:j+1] is wether a palindromic string or not.
+If i==j, string is a single char, it is a palindromic string.
+If i+1==j and s[i]==s[j], string is a two adjacent same char, it is a palindromic string.
+If i+1<j and s[i]==s[j], dp[i][j]=dp[i+1][j-1]
+We need to calculate dp[i][j] from the left down corner of dp matrix. So the loop order should be from left to right and from down to up.
+And, j should be larger or equal to i, we only need to calculate right up half of the dp matrix.
+"""
+    def countSubstrings(self, s: str) -> int:
+        
+        dp=[[False]*(len(s)) for _ in range(len(s))]
+
+        for i in range(len(s),-1,-1):
+            for j in range(i,len(s)):
+                if s[i]==s[j]:
+                    if j-i<=1:
+                        dp[i][j]=True
+                    else:
+                        dp[i][j]=dp[i+1][j-1]
+        
+        ans=0
+        for i in range(len(s)):
+            for j in range(i,len(s)):
+                if dp[i][j]:
+                    ans+=1
+        return ans
+
     def countSubstrings(self, s: str) -> int:
         
         dp=[[False]*(len(s)+1) for _ in range(len(s))]
