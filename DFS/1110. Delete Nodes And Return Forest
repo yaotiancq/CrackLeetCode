@@ -1,0 +1,110 @@
+# Given the root of a binary tree, each node in the tree has a distinct value.
+# After deleting all nodes with a value in to_delete, we are left with a forest (a disjoint union of trees).
+# Return the roots of the trees in the remaining forest. You may return the result in any order.
+
+# Example 1:
+# Input: root = [1,2,3,4,5,6,7], to_delete = [3,5]
+# Output: [[1,2,null,4],[6],[7]]
+
+# Example 2:
+# Input: root = [1,2,4,null,3], to_delete = [3]
+# Output: [[1,2,4]]
+
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+
+"""
+First, normally, we consider root as current node we are operating, not node's children. If we think we need to deal with its children not itself, the reason is we
+might to deal with the connection of current node and its parent. Jus lik this one, we want to cut the connection with current node with its parent if current node
+is in our to_delete list. But we can not finish our task through setting current node to None, because pointer between parent and its child is one way pointer, we must
+cut the connection on the parent side: root.left=None. Thinking like this, we might want to deal with current node's child but not itself. This will become more 
+complicated. We can still deal with current node not its child. How should we do it?  
+For current node, if parent is in list, we want to add it to ans if current node not in list. Also. If current node is in list, we want to use this status in 
+its child. So we need to pass an information through DFS process. This is why we need another parameter in DFS function. The smater way to deal with the connection
+of current node and its parrent is return None for parent if current node is in list.
+root.left=dfs(root, para)
+root.right=dfs(root, para)
+return None if root.val in list else root
+
+Important: when we design dfs function, our view is current node. We must have two extend view:  what current node need form parent? what the parent need from current
+node? What current node can give child? What current node need from child? We need to coordinate these two needs. It is a bit like tree dp.
+
+Root has different situation from ordinary nodes. It do not have parent. So, sometimes, we can assign a virtual parent for root to keep the processing logic the same.
+In this problem, we need information from parent to indicate that parent whether is in list or not. We can natruely consider that there is a virtual parent for root
+which is in list.So that root will fall into the same processing logic as normal nodes.
+
+"""
+    def delNodes(self, root: Optional[TreeNode], to_delete: List[int]) -> List[TreeNode]:
+        def dfs(root, flag):
+            if not root:
+                return None
+
+            notInToDelete=root.val not in to_delete
+
+            if not flag and notInToDelete:
+                ans.append(root)
+
+            root.left=dfs(root.left, notInToDelete)
+            root.right=dfs(root.right, notInToDelete)
+
+            return None if not notInToDelete else root
+
+        ans=[]
+        dfs(root, False)
+        
+        return ans
+
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def delNodes(self, root: Optional[TreeNode], to_delete: List[int]) -> List[TreeNode]:
+        def dfs(root, to_delete):
+
+            if not root:
+                return
+
+            dfs(root.left, to_delete)
+            dfs(root.right, to_delete)
+
+            if root.left and root.left.val in to_delete:
+                if root.left.left:
+                    ans.append(root.left.left)
+                if root.left.right:
+                    ans.append(root.left.right)
+                del to_delete[root.left.val]
+                root.left=None
+
+            if root.right and root.right.val in to_delete:
+                if root.right.left:
+                    ans.append(root.right.left)
+                if root.right.right:
+                    ans.append(root.right.right)
+                del to_delete[root.right.val]
+                root.right=None
+
+
+        ans=[]
+        d={}
+        for num in to_delete:
+            d[num]=1
+
+        dfs(root, d)
+        
+        if root.val not in d:
+            ans.append(root)
+        else:
+            if root.left:
+                ans.append(root.left)
+            if root.right:
+                ans.append(root.right)
+     
+        return ans
