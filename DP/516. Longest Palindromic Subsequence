@@ -1,0 +1,39 @@
+# Given a string s, find the longest palindromic subsequence's length in s.
+# A subsequence is a sequence that can be derived from another sequence by deleting some or no elements without changing the order of the remaining elements.
+
+# Example 1:
+# Input: s = "bbbab"
+# Output: 4
+# Explanation: One possible longest palindromic subsequence is "bbbb".
+
+# Example 2:
+# Input: s = "cbbd"
+# Output: 2
+# Explanation: One possible longest palindromic subsequence is "bb".
+
+class Solution:
+
+"""
+If s[i]==s[j], dp[i][j]=dp[i+1][j-1]+2
+If s[i]!=s[j], apparently, dp[i][j] can not be the full length, there are 3 cases needed to consider:
+abbbbc: dp[i][j]=dp[i+1][j-1]
+aaaaac: dp[i][j]=dp[i][j-1]
+abbbbb: dp[i][j]=dp[i+1][j]
+But we do not dig into every possible detail, we just need to get the max of them, because our problem is to get the max lenght, and every pre-calculated dp value 
+based on s. They get every information we need, we don't need another discuss, it all show in the results of dp.
+"""
+    def longestPalindromeSubseq(self, s: str) -> int:
+        
+        dp=[[1]*len(s) for _ in range(len(s))]
+
+        for i in range(len(s)-1,-1,-1):
+            for j in range(i,len(s)):
+                if s[i]==s[j]:
+                    if j-i==1:
+                        dp[i][j]=dp[i][j-1]+1
+                    elif j-i>1:
+                        dp[i][j]=dp[i+1][j-1]+2
+                else:
+                    dp[i][j]=max(dp[i+1][j],dp[i][j-1])
+        
+        return dp[0][-1]
