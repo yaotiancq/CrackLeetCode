@@ -1,0 +1,60 @@
+# You are given an m x n binary matrix grid. An island is a group of 1's (representing land) connected 4-directionally (horizontal or vertical.) 
+# You may assume all four edges of the grid are surrounded by water.
+# The area of an island is the number of cells with a value 1 in the island.
+# Return the maximum area of an island in grid. If there is no island, return 0.
+
+class Solution:
+
+"""DFS"""
+    def maxAreaOfIsland(self, grid: List[List[int]]) -> int:
+        
+        def dfs(i,j,t):
+            
+            grid[i][j]=0
+            t.append(1)
+
+            for di,dj in [[0,1],[0,-1],[1,0],[-1,0]]:
+                ni,nj=i+di,j+dj
+                if 0<=ni<len(grid) and 0<=nj<len(grid[0]) and grid[ni][nj]==1:
+                    dfs(ni,nj,t)
+
+        ans=0
+        for i in range(len(grid)):
+            for j in range(len(grid[0])):
+                if grid[i][j]==1:
+                    t=[]
+                    dfs(i,j,t)
+                    ans=max(ans,sum(t))
+
+        return ans
+
+
+  class Solution:
+
+  """BFS"""
+    def maxAreaOfIsland(self, grid: List[List[int]]) -> int:
+        
+        def bfs(t):
+
+            while q:
+                curr=q.pop(0)
+                for di,dj in [[0,1],[0,-1],[1,0],[-1,0]]:
+                    ni,nj=curr[0]+di,curr[1]+dj
+                    if 0<=ni<len(grid) and 0<=nj<len(grid[0]) and grid[ni][nj]==1:
+                        q.append([ni,nj])
+                        t.append(1)
+                        grid[ni][nj]=0
+
+        ans=0
+        for i in range(len(grid)):
+            for j in range(len(grid[0])):
+                if grid[i][j]==1:
+                    t=[]
+                    q=[]
+                    q.append([i,j])
+                    t.append(1)
+                    grid[i][j]=0
+                    bfs(t)
+                    ans=max(ans,sum(t))
+
+        return ans
