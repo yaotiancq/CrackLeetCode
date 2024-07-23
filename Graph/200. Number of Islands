@@ -1,0 +1,76 @@
+# Given an m x n 2D binary grid grid which represents a map of '1's (land) and '0's (water), return the number of islands.
+# An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically. 
+# You may assume all four edges of the grid are all surrounded by water.
+
+Example 1:
+Input: grid = [
+  ["1","1","1","1","0"],
+  ["1","1","0","1","0"],
+  ["1","1","0","0","0"],
+  ["0","0","0","0","0"]
+]
+Output: 1
+
+class Solution:
+"""
+Loop over every element in matrix, if meet 1, we set it to 0 and DFS the connect element to set them to 0 too. So,
+When we meet 1, we alternate every connected 1 to 0 and cnt add 1. The number of 1 we meet is the number of island.
+"""
+    def numIslands(self, grid: List[List[str]]) -> int:
+        
+        def dfs(i,j):
+
+            grid[i][j]='0'
+
+            for di,dj in [[-1,0],[1,0],[0,-1],[0,1]]:
+                ni,nj=di+i,dj+j
+                if 0<=ni<=len(grid)-1 and 0<=nj<=len(grid[0])-1 and grid[ni][nj]=='1':
+                    dfs(ni,nj)
+                
+        cnt=0
+        for i in range(len(grid)):
+            for j in range(len(grid[0])):
+                if grid[i][j]=='1':
+                    cnt+=1
+                    dfs(i,j)
+
+        return cnt
+
+class Solution:
+
+"""
+BFS solution, BFS is used for finding the shortest path of two point.
+
+BFS process: for the start point of searching, BFS will try every possible point around start point. After the first circle around the start
+point, then the outer circle.
+BFS put the start point in a queue to form a initial status. In a bfs function, it go with a while loop, it will loop unless the queue is empty.
+In the loop body, pop out the head of queue and take the poped element as current node to calculate. Then, it must add more qualified surrounding
+nodes of this current node.
+
+The marking as read is a key operation when we do BFS, because we don't want to access the node we have already accessed. And, there is a important
+thing we need to care about. We must mark the node when it push into the queue, we do not mark it when it pop out of queue, because the perid when
+the node stay in queue, we might repeatly access this node. This will significantly slow down BFS.
+"""
+    def numIslands(self, grid: List[List[str]]) -> int:
+        
+        def bfs():
+            
+            while q:
+                curr=q.pop(0)
+                for di,dj in [[1,0],[-1,0],[0,-1],[0,1]]:
+                    ni,nj=curr[0]+di,curr[1]+dj
+                    if 0<=ni<=len(grid)-1 and 0<=nj<=len(grid[0])-1 and grid[ni][nj]=='1':
+                        q.append([ni,nj])
+                        grid[ni][nj]='0'
+
+        cnt=0
+        for i in range(len(grid)):
+            for j in range(len(grid[0])):
+                if grid[i][j]=='1':
+                    cnt+=1
+                    q=[]
+                    grid[i][j]='0'
+                    q.append([i,j])
+                    bfs()
+
+        return cnt
