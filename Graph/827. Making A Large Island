@@ -1,0 +1,62 @@
+# You are given an n x n binary matrix grid. You are allowed to change at most one 0 to be 1.
+# Return the size of the largest island in grid after applying this operation.
+# An island is a 4-directionally connected group of 1s.
+
+# Example 1:
+# Input: grid = [[1,0],[0,1]]
+# Output: 3
+# Explanation: Change one 0 to 1 and connect two 1s, then we get an island with area = 3.
+
+# Example 2:
+# Input: grid = [[1,1],[1,0]]
+# Output: 4
+# Explanation: Change the 0 to 1 and make the island bigger, only one island with area = 4.
+
+class Solution:
+
+"""
+First, calculate all island's area using DFS and mark different island with different color,  and record area in dictionary.
+Second, traversal every 0 which is adjacent to an island. For each such 0, loop its 4 directions and sum the island area, and compare with the largest
+        area in dictionary.
+"""
+    def largestIsland(self, grid: List[List[int]]) -> int:
+        
+        def dfs(i,j,t):
+            
+            grid[i][j]=currCode
+            t[0]+=1
+
+            for di,dj in [[0,1],[0,-1],[1,0],[-1,0]]:
+                ni,nj=i+di,j+dj
+                if 0<=ni<len(grid) and 0<=nj<len(grid[0]) and grid[ni][nj]==1:
+                    dfs(ni,nj,t)
+
+        d={}
+        currCode=2
+        for i in range(len(grid)):
+            for j in range(len(grid[0])):
+                if grid[i][j]==1:
+                    t=[0]
+                    dfs(i,j,t)
+                    d[currCode]=t[0]
+                    currCode+=1
+                    
+        if not d:
+            return 1
+
+        maxArea=max(d.values())
+
+        for i in range(len(grid)):
+            for j in range(len(grid[0])):
+                visited=set()
+                if grid[i][j]==0:
+                    temp=1
+                    for di,dj in [[0,1],[0,-1],[1,0],[-1,0]]:
+                        ni,nj=i+di,j+dj
+                        if 0<=ni<len(grid) and 0<=nj<len(grid[0]) and grid[ni][nj]!=0:
+                            if grid[ni][nj] not in visited:
+                                temp+=d[grid[ni][nj]]
+                                visited.add(grid[ni][nj])
+                    maxArea=max(maxArea, temp)
+
+        return maxArea
