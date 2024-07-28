@@ -1,0 +1,43 @@
+# You are given two m x n binary matrices grid1 and grid2 containing only 0's (representing water) and 1's (representing land).
+# An island is a group of 1's connected 4-directionally (horizontal or vertical).
+# Any cells outside of the grid are considered water cells.
+# An island in grid2 is considered a sub-island if there is an island in grid1 that contains all the cells that make up this island in grid2.
+# Return the number of islands in grid2 that are considered sub-islands.
+
+# Example 1:
+# Input: grid1 = [[1,1,1,0,0],[0,1,1,1,1],[0,0,0,0,0],[1,0,0,0,0],[1,1,0,1,1]], grid2 = [[1,1,1,0,0],[0,0,1,1,1],[0,1,0,0,0],[1,0,1,1,0],[0,1,0,1,0]]
+# Output: 3
+# Explanation: In the picture above, the grid on the left is grid1 and the grid on the right is grid2.
+# The 1s colored red in grid2 are those considered to be part of a sub-island. There are three sub-islands.
+
+class Solution:
+
+"""
+How to count the number of island? 
+    --- ans add 1 when meet 1 in grid + set every 1 to 0 when dfs in grid.
+When we dfs in grid2 to find a island, if we meet some 1 cell in grid2 and same cell in grid1 is 0, we should know that this island is not our sub island.
+
+"""
+    def countSubIslands(self, grid1: List[List[int]], grid2: List[List[int]]) -> int:
+        
+        def dfs(i,j,isOverlap):
+            
+            if grid1[i][j]==0:
+                isOverlap[0]=False
+                
+            grid2[i][j]=0
+            for di,dj in [[0,1],[0,-1],[1,0],[-1,0]]:
+                ni,nj=i+di,j+dj
+                if 0<=ni<len(grid2) and 0<=nj<len(grid2[0]) and grid2[ni][nj]==1:
+                    dfs(ni,nj,isOverlap)
+
+        ans=0
+        for i in range(len(grid2)):
+            for j in range(len(grid2[0])):
+                if grid2[i][j]==1:
+                    isOverlap=[True]
+                    dfs(i,j,isOverlap)
+                    if isOverlap[0]:
+                        ans+=1
+                        
+        return ans
