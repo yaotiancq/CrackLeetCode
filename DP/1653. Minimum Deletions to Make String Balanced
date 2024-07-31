@@ -1,0 +1,68 @@
+# You are given a string s consisting only of characters 'a' and 'b'​​​​.
+# You can delete any number of characters in s to make s balanced. 
+# s is balanced if there is no pair of indices (i,j) such that i < j and s[i] = 'b' and s[j]= 'a'.
+# Return the minimum number of deletions needed to make s balanced.
+
+# Example 1:
+# Input: s = "aababbab"
+# Output: 2
+# Explanation: You can either:
+# Delete the characters at 0-indexed positions 2 and 6 ("aababbab" -> "aaabbb"), or
+# Delete the characters at 0-indexed positions 3 and 6 ("aababbab" -> "aabbbb").
+
+# Example 2:
+# Input: s = "bbaaaaabb"
+# Output: 2
+# Explanation: The only solution is to delete the first two characters.
+
+class Solution:
+
+"""
+DP is not the best solution for this problem, but it is worthy.
+
+dp[0][i] denotes the minimal deletion of substring ending with 'a' at index i
+dp[1][i] denotes the minimal deletion of substring ending with 'b' at index i
+
+"""
+    def minimumDeletions(self, s: str) -> int:
+        
+        dp=[[0]*len(s) for _ in range(2)]
+
+        if s[0]=='a':
+            dp[1][0]=1
+        else:
+            dp[0][0]=1
+
+        for i in range(2):
+            for j in range(1,len(s)):
+                if s[j]=='a':
+                    dp[0][j]=dp[0][j-1]
+                    dp[1][j]=dp[1][j-1]+1
+                else:
+                    dp[0][j]=dp[0][j-1]+1
+                    dp[1][j]=min(dp[0][j-1],dp[1][j-1])
+
+        return min(dp[0][-1],dp[1][-1])
+
+
+class Solution:
+
+"""
+stack and gready is the best solution for this problem
+"""
+    def minimumDeletions(self, s: str) -> int:
+        
+        cnt=0
+        stack=[]
+
+        for c in s:
+            if not stack:
+                stack.append(c)
+            else:
+                if c=='a' and stack[-1]=='b':
+                    cnt+=1
+                    stack.pop()
+                else:
+                    stack.append(c)
+
+        return cnt
