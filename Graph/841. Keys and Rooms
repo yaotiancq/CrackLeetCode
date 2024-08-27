@@ -1,0 +1,36 @@
+class Solution:
+
+"""
+With global visited recording visited element in graph traversal, we can still make sure that dfs traversal every node in graph when they are connected.
+Backtracking is maining used for combination, route kind of problem.
+"""
+    def canVisitAllRooms(self, rooms: List[List[int]]) -> bool:
+        
+        def createGraph():
+
+            graph={}
+            for i in range(len(rooms)):
+                graph[i]=rooms[i]
+
+            return graph
+
+        def dfs(curr_room):
+
+            if len(visited)==len(rooms):
+                ans[0] = True
+
+            for room in graph[curr_room]:
+                if room not in visited:
+                    visited.add(room)
+                    dfs(room)
+
+        graph=createGraph()
+    
+        ans=[False]
+        visited=set()
+        visited.add(0)
+        dfs(0)
+
+        return ans[0]
+
+        
