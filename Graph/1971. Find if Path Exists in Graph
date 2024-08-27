@@ -16,6 +16,7 @@ class Solution:
 
 """
 BFS
+bfs need to put element into visited when it be pushed in queue, so that the time complexity can be reduced.
 """
     def validPath(self, n: int, edges: List[List[int]], source: int, destination: int) -> bool:
         def createGraph():
@@ -83,7 +84,8 @@ dfs(curr_node):
             visited[node]=True
             dfs(node)
 backtracking is used to cancel the current node operation. If we don't use backtracking to cancel current node, it do not affect the search of other
-route. But, if we need to record one possible accurate route, we need to cancel current node operation. The difference is o
+route. But, if we need to record one possible accurate route, we need to cancel current node operation. The difference between these two is whether we 
+need to look after the result we gethering. Before any canceling of current node, the sub-level of this current node must be explore completely. 
 """
     def validPath(self, n: int, edges: List[List[int]], source: int, destination: int) -> bool:
         def createGraph():
