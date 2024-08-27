@@ -12,6 +12,57 @@
 # - 0 → 1 → 2
 # - 0 → 2
 
+"""
+Union-Find:  It is usually used to determine whether the two element in the same set, or check the connectivity of elements.
+Use dictionary to create relationship between elements, if the two elements are connected, then, we should first find the root of each element,
+then, if both of the root is different,  we should set d[ele1_root]=ele2_root. It mean that ele1's root's root is ele2_root.
+find() is a recursive function, we should recursively find u's root, and assign this root as u's parent. This is path compression.
+isSame() used to determine whether the two elements are in the same set. If yes, return True, if no, return False.
+is ele2
+union-find framework:  
+def init():
+    for i in range(n):
+        father[i]=i
+def find(u):  # find the root of node u
+    if father[u]==u:
+        return u
+    else:
+        father[u]=find(father[u])
+        return father[u]
+def isSame(u,v):
+    u=find(u)
+    v=find(v)
+    return u==v
+def union(u,v):
+    u=find(u)
+    v=find(v)
+    if u==v:
+        return
+    father[v]=u
+"""
+class UnionFind:
+    def __init__(self):
+        self.id={}
+    def find(self,x):
+        y=self.id.get(x,x) #it make init() more simple
+        if y!=x:
+            y=self.find(y)
+            self.id[x]=y   # path compression: the key to reduce time complexity
+        return y
+    def union(self,x,y):  # use dictionary to create a set. if node share the same root, they are in the same set
+        x=self.find(x)
+        y=self.find(y)
+        self.id[x]=y
+
+class Solution:
+
+    def validPath(self, n: int, edges: List[List[int]], source: int, destination: int) -> bool:
+        uf=UnionFind()
+        for edge in edges:
+            uf.union(edge[0],edge[1])
+        return uf.find(source)==uf.find(destination)
+
+
 class Solution:
 
 """
