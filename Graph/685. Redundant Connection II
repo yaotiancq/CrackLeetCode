@@ -74,6 +74,60 @@ Use dictionary, make child as key, parent as value. Loop over edges and build th
 already have a value(parent), so this child is the conflic node. This edge is the second conflic edge, the original value(parent) is the first 
 conflic edge.
 """
+
+class UnionFind:
+    def __init__(self):
+        self.d={}
+    def find(self,x):
+        y=self.d.get(x,x)
+        if y!=x:
+            y=self.find(y)
+            self.d[x]=y
+        return y
+    def isSame(self,x,y):
+        x_root=self.find(x)
+        y_root=self.find(y)
+        return x_root==y_root
+    def union(self,x,y):
+        x_root=self.find(x)
+        y_root=self.find(y)
+        if x_root==y_root:
+            return
+        else:
+            self.d[y_root]=x_root
+
+class Solution:
+    def findRedundantDirectedConnection(self, edges: List[List[int]]) -> List[int]:
+        
+        firstConflicEdge=[]
+        secondConflicEdge=[]
+        
+        d={}
+        for parent, child in edges:
+            if child not in d:
+                d[child]=parent
+            else:
+                secondConflicEdge=[parent, child]
+                firstConflicEdge=[d[child],child]
+
+        uf=UnionFind()
+        if not firstConflicEdge:
+            for parent, child in edges:
+                if uf.isSame(parent, child):
+                    return [parent, child]
+                else:
+                    uf.union(parent, child)
+        else:
+            for parent, child in edges:
+                if [parent, child]==secondConflicEdge:
+                    continue
+                if uf.isSame(parent, child):
+                    return firstConflicEdge
+                uf.union(parent, child)
+            return secondConflicEdge
+"""
+#######################################
+"""
 class UnionFind:
     def __init__(self,n):
         self.d={i:i for i in range(n+1)}
