@@ -1,0 +1,126 @@
+# In this problem, a rooted tree is a directed graph such that, there is exactly one node (the root) for which all other nodes are descendants of this node, 
+# plus every node has exactly one parent, except for the root node which has no parents.
+# The given input is a directed graph that started as a rooted tree with n nodes (with distinct values from 1 to n), 
+# with one additional directed edge added. The added edge has two different vertices chosen from 1 to n, and was not an edge that already existed.
+# The resulting graph is given as a 2D-array of edges. 
+# Each element of edges is a pair [ui, vi] that represents a directed edge connecting nodes ui and vi, where ui is a parent of child vi.
+# Return an edge that can be removed so that the resulting graph is a rooted tree of n nodes. 
+# If there are multiple answers, return the answer that occurs last in the given 2D-array.
+
+# Example 1:
+# Input: edges = [[1,2],[1,3],[2,3]]
+# Output: [2,3]
+
+# Example 2:
+# Input: edges = [[1,2],[2,3],[3,4],[4,1],[1,5]]
+# Output: [4,1]
+
+
+"""
+Union Find
+The key to solve this problem efficiently is to find patterns.
+Here is the truth:
+Adding a connection to a tree will create a cycle for sure, and it may cause one of the nodes to have two parents. If there exist conflic node, 
+this confilic node must be in the cycle, and at least one of the confilc edges is in this cycle.
+
+      ⬅ node ➡
+          ⬇
+  one node have 3 edges at most, when it has 3 edges, it is the conflic node. A conflic node will always in cycle. So, two of conflic node's edges
+will be in cycle. So, at least one conflic edges will be in the cycle. At most, both two conflic edge are in cylce.
+
+1. If there is no conflic node and its two conflic edges, the last edge that form a cycle is the edge we should remove.
+       root  ➡ child1
+         ⬆         ⬇
+       child3 ⬅ child2
+   We loop over the edges, before build union set, checking the two nodes whether have same root or not. If two nodes of one edges have the same root,
+   We can said that this edge is the edge that form the cycle. So, this edge is our target edge.
+
+2. If the confilic node exist, the conflic node must be in the cycle, and at least one of the conflic edges must be in the cycle.
+
+   a. If the two conflic edges are all in the cycle:
+       root  ➡ child1
+         ⬇         ⬇
+       child3 ⬅ child2  # child3's two conflic edges are all in the cycle
+      We want to remove the second conflic edge of the conflic node. Because removing any conflic edge will break cycle and also remove 
+      redundant edges, and the last one is the second conflic edge.
+      The problem is, how can we know the two conflic edges are all in the cycle?  
+      In our detection of cycle, we use isSame() or a little bit different version of union() to check the two end point node of one edge. 
+      If this edge form a cycle, the return of isSame() or union() will show the end point of this edge have same root, or said, already connected.
+      If two conflic edges are all in cycle, removing any of the conflic edge will break the cycle. If we remove the second conflic edge before we
+      build union set, there will be no cycle detected when we loop over edges. So the second conflic edge is our answer.
+      We loop over the edges, pass the second confilc edge, if the there is no cycle exist, then the second conflic edges is our target edge.
+
+   b. If only one conflic edge is in the cycle:
+        child4  ➡ child1 ⬅ root
+          ⬆           ⬇
+       child3  ⬅  child2   # one of child1's conflic edge is in cycle
+      In this case, we want to remove the edge which is conflic edge and also in the cycle. 
+      We loop over the edges, pass the second coflic edge, if the cycle is still exist, we should return the first edge.
+
+The logic is:
+
+if conflic_edge is None:
+    return edge which form the cycle
+else:
+    new_edges = edges remove second conflic edge
+    test cycle when build union set on new_edges:
+      if cycle exist:
+          return first conflic edge
+      else:
+          return second conflic edge
+
+How to detect conflic edges:
+Use dictionary, make child as key, parent as value. Loop over edges and build this dictionary, if child already exist, that is to say, this child 
+already have a value(parent), so this child is the conflic node. This edge is the second conflic edge, the original value(parent) is the first 
+conflic edge.
+"""
+class UnionFind:
+    def __init__(self,n):
+        self.d={i:i for i in range(n+1)}
+
+    def find(self,x):
+        y=self.d[x]
+        if y!=x:
+            y=self.find(y)
+            self.d[x]=y
+        return y
+
+    def union(self,x,y):
+        x=self.find(x)
+        y=self.find(y)
+        if x==y:
+            return False
+        else:
+            self.d[y]=x
+            return True
+    
+    def isSame(self, x, y):
+        x=self.find(x)
+        y=self.find(y)
+        return x==y
+
+class Solution:
+    def findRedundantDirectedConnection(self, edges: List[List[int]]) -> List[int]:
+        
+        uf=UnionFind(len(edges))
+
+        edge1=[]
+        edge2=[]
+
+        parent={}
+        for parentNode, childNode in edges:
+            if childNode not in parent:
+                parent[childNode]=parentNode
+            else:
+                edge1=[parent[childNode], childNode]
+                edge2=[parentNode, childNode]
+
+        for parentNode, childNode in edges:
+            if [parentNode, childNode]==edge2:
+                continue
+            if not uf.union(parentNode, childNode):
+                if edge1:
+                    return edge1
+                return [parentNode, childNode]
+
+        return edge2
