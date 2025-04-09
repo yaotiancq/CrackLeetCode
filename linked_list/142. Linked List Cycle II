@@ -20,14 +20,12 @@ class Solution:
          -        -
 ->-->-x1-->-->-x---
 First meet:  
-    fast: x1+x2+x
+    fast: x1+x2+2x
     slow: x1+x
-x1+x2+x=2*(x1+x)
-=> x2=x1+x
+x1+x2+2x=2*(x1+x)
+=> x2=x1
 Second meet:
-    slow: y
-    fast: y
-if y==x1=x2-x:
+    slow continue, fast start from the beginning, x1 = x2
   then, slow and fast will meet again at x1 
 """
     def detectCycle(self, head: Optional[ListNode]) -> Optional[ListNode]:
