@@ -9,13 +9,13 @@
 # You must implement a solution with O(1) time complexity for each function.
 
 class MinStack:
-
+"""
+The key is to design the minstack. In this implementation, the minstack will always track the current length of stack's minimal value.
+"""
     def __init__(self):
         self.stack=[]
         self.minstack=[]
-"""
-The key is to design the minstack. In this implementation, the minstack will always track the current position stack's minimal value.
-"""
+
     def push(self, val: int) -> None:
         self.stack.append(val)
         val=min(val, self.minstack[-1] if self.minstack else val)
@@ -23,7 +23,10 @@ The key is to design the minstack. In this implementation, the minstack will alw
 
     def pop(self) -> None:
         self.stack.pop()
-        self.minstack.pop()
+        self.minStack.pop()
 
     def top(self) -> int:
         return self.stack[-1]
+
+    def getMin(self) -> int:
+        return self.minStack[-1]
