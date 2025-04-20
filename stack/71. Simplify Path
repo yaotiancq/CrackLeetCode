@@ -104,3 +104,24 @@ the same processing logic.
         if stack[-1]=='/' and len(stack)>1:
             stack.pop()
         return ''.join(stack)
+
+"""
+recomanded method:
+split the string by '/' first, ignore the '' and '.', just need to deal with '..'. It is clear that we need stack to deal with it.
+"""
+class Solution:
+    def simplifyPath(self, path: str) -> str:
+        
+        stack=[]
+        path_list = path.split('/')
+
+        for item in path_list:
+            if item!='' and item!='.':
+                if item == '..':
+                    if stack!=[]:
+                        stack.pop()
+                    continue
+                stack.append(item)
+   
+        return '/'+'/'.join(stack)
+
